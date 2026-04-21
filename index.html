@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>TON GIFT HUB</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+:root{
+  --bg:#060A12;--s1:#0A0F1E;--s2:#0E1428;
+  --ac:#0098EA;--ac2:#0077BB;--ac3:#00C6FF;
+  --gr:#10B981;--ye:#F59E0B;--re:#EF4444;
+  --t1:#E8F4FF;--t2:#7A9CC0;--t3:#3A5070;
+  --b1:rgba(0,152,234,.12);--b2:rgba(0,152,234,.22);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;position:fixed;width:100%;background:var(--bg);color:var(--t1);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.app{height:100%;display:flex;flex-direction:column;max-width:430px;margin:0 auto}
+#scroll{flex:1;overflow-y:scroll;-webkit-overflow-scrolling:touch;padding-bottom:80px}
+#scroll::-webkit-scrollbar{display:none}
+header{padding:11px 14px;display:flex;align-items:center;justify-content:space-between;background:rgba(6,10,18,.98);border-bottom:1px solid var(--b1);flex-shrink:0;gap:8px}
+.logo-row{display:flex;align-items:center;gap:8px;cursor:pointer;flex-shrink:0}
+.logo-box{width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,var(--ac),var(--ac2));display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 0 10px rgba(0,152,234,.35);flex-shrink:0}
+.logo-name{font-size:13px;font-weight:900;letter-spacing:-.2px;color:var(--ac3);white-space:nowrap}
+.hdr-right{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.lang-sel{background:var(--s2);border:1px solid var(--b1);color:var(--t1);font-size:10px;font-weight:600;padding:4px 6px;border-radius:7px;cursor:pointer;font-family:inherit;outline:none;max-width:80px}
+#pts-btn{background:var(--b1);border:1px solid var(--b2);padding:5px 10px;border-radius:18px;font-size:11px;font-weight:700;color:var(--ac3);cursor:pointer;white-space:nowrap}
+nav.bottom{background:rgba(6,10,18,.98);border-top:1px solid var(--b1);display:flex;padding:8px 0 18px;flex-shrink:0}
+.nb{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:3px 0;border:none;background:none;font-family:inherit}
+.nb .ic{font-size:18px;opacity:.3}
+.nb .lb{font-size:9px;font-weight:600;color:var(--t3)}
+.nb.on .ic{opacity:1}
+.nb.on .lb{color:var(--ac)}
+.page{display:none}
+.page.on{display:block}
+.hero{margin:12px 14px;background:linear-gradient(135deg,#060E20,#081428);border:1px solid var(--b2);border-radius:18px;padding:16px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-30px;right:-30px;width:120px;height:120px;background:radial-gradient(circle,rgba(0,152,234,.12),transparent);border-radius:50%}
+.hero-pill{display:inline-flex;align-items:center;gap:4px;background:var(--b1);border:1px solid var(--b2);color:var(--ac);font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;padding:4px 10px;border-radius:20px;margin-bottom:9px}
+.hero h1{font-size:19px;font-weight:900;line-height:1.25;margin-bottom:5px}
+.hero p{font-size:11px;color:var(--t2);line-height:1.6;margin-bottom:11px}
+.hero-tags{display:flex;gap:5px;flex-wrap:wrap}
+.htag{font-size:10px;color:var(--t2);background:rgba(0,152,234,.06);border:1px solid var(--b1);padding:3px 8px;border-radius:18px}
+.search-wrap{margin:10px 14px;display:flex;align-items:center;gap:8px;background:var(--s2);border:1px solid var(--b1);border-radius:13px;padding:10px 14px}
+.search-wrap input{background:none;border:none;outline:none;color:var(--t1);font-family:inherit;font-size:13px;flex:1}
+.search-wrap input::placeholder{color:var(--t3)}
+.cats{display:flex;gap:7px;overflow-x:auto;padding:0 14px 10px;scrollbar-width:none}
+.cats::-webkit-scrollbar{display:none}
+.cat{flex-shrink:0;padding:7px 14px;border-radius:20px;font-size:11px;font-weight:600;border:1px solid var(--b1);background:var(--s2);color:var(--t2);cursor:pointer;font-family:inherit;white-space:nowrap}
+.cat.on{background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff;border-color:transparent;box-shadow:0 3px 10px rgba(0,152,234,.3)}
+.sec-hd{display:flex;justify-content:space-between;align-items:center;padding:0 14px;margin-bottom:10px}
+.sec-t{font-size:13px;font-weight:700}
+.sec-s{font-size:11px;color:var(--t2)}
+#cards-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 14px;margin-bottom:16px}
+.card{background:var(--s1);border:1px solid var(--b1);border-radius:16px;overflow:hidden;cursor:pointer;transition:transform .15s}
+.card:active{transform:scale(.97)}
+.card-img{height:90px;display:flex;align-items:center;justify-content:center;font-size:40px;position:relative}
+.card-badge{position:absolute;top:7px;left:7px;font-size:9px;font-weight:800;padding:2px 7px;border-radius:5px}
+.bh{background:rgba(239,68,68,.9);color:#fff}
+.bn{background:rgba(16,185,129,.9);color:#fff}
+.bp{background:rgba(0,152,234,.85);color:#fff}
+.card-info{padding:9px 11px 11px}
+.card-name{font-size:12px;font-weight:700;margin-bottom:3px}
+.card-price{font-size:11px;color:var(--ac);font-weight:600;margin-bottom:5px}
+.card-tag{font-size:9px;font-weight:700;background:var(--b1);color:var(--ac);padding:2px 7px;border-radius:5px}
+.trust{margin:0 14px 16px;background:var(--s1);border:1px solid var(--b1);border-radius:16px;overflow:hidden}
+.trust-title{padding:10px 14px 8px;font-size:10px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--b1)}
+.trow{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--b1)}
+.trow:last-child{border:none}
+.tic{width:30px;height:30px;border-radius:8px;background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.ttx{flex:1}
+.ttn{font-size:12px;font-weight:600;margin-bottom:1px}
+.tds{font-size:10px;color:var(--t2)}
+.tck{color:var(--ac);font-weight:700;font-size:14px}
+.empty{text-align:center;padding:50px 20px}
+.empty-i{font-size:38px;opacity:.2;margin-bottom:10px}
+.empty-t{font-size:15px;font-weight:700;margin-bottom:5px}
+.empty-d{font-size:11px;color:var(--t2);line-height:1.5}
+.order-row{background:var(--s1);border:1px solid var(--b1);border-radius:13px;padding:12px;margin-bottom:8px;display:flex;align-items:center;gap:10px}
+.order-ic{font-size:26px;flex-shrink:0}
+.order-inf{flex:1}
+.order-nm{font-size:12px;font-weight:700;margin-bottom:2px}
+.order-sb{font-size:10px;color:var(--t2)}
+.order-dt{font-size:9px;color:var(--t3);margin-top:1px}
+.badge{font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;white-space:nowrap}
+.b-pend{background:rgba(245,158,11,.1);color:var(--ye)}
+.b-done{background:rgba(16,185,129,.1);color:var(--gr)}
+.b-canc{background:rgba(239,68,68,.1);color:var(--re)}
+.rw-hero{margin:12px 14px;background:linear-gradient(135deg,#050D00,#0A1400);border:1px solid rgba(0,198,255,.2);border-radius:18px;padding:18px;text-align:center}
+.rw-label{font-size:10px;font-weight:700;color:var(--ac3);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.rw-pts{font-size:36px;font-weight:900;color:var(--ac3);margin-bottom:4px}
+.rw-sub{font-size:11px;color:var(--t2)}
+.rw-bar-bg{background:rgba(0,152,234,.1);border-radius:4px;height:7px;margin:12px 0 5px}
+.rw-bar{height:7px;border-radius:4px;background:linear-gradient(90deg,var(--ac2),var(--ac3))}
+.rw-next{font-size:10px;color:var(--t2)}
+.rd-item{background:var(--s1);border:1px solid var(--b1);border-radius:14px;padding:14px;margin-bottom:10px;display:flex;align-items:center;gap:12px}
+.rd-btn{padding:8px 14px;border-radius:9px;font-size:11px;font-weight:700;border:none;cursor:pointer;font-family:inherit}
+.rd-can{background:linear-gradient(135deg,var(--gr),#059669);color:#fff}
+.rd-cant{background:var(--s2);color:var(--t3);border:1px solid var(--b1)}
+.ref-box{background:var(--s1);border:1px solid var(--b1);border-radius:14px;padding:14px;margin-bottom:12px}
+.ref-row{background:var(--s2);border:1px solid var(--b2);border-radius:9px;padding:10px 13px;display:flex;align-items:center;justify-content:space-between;margin-bottom:9px}
+.ref-code{font-size:13px;font-weight:800;color:var(--ac);letter-spacing:1px}
+.ref-copy{background:var(--b1);border:1px solid var(--b2);color:var(--ac);font-size:10px;font-weight:700;padding:5px 10px;border-radius:6px;cursor:pointer;font-family:inherit}
+.prof-hero{margin:12px 14px;background:linear-gradient(135deg,#060E20,#081428);border:1px solid var(--b2);border-radius:18px;padding:18px;text-align:center}
+.prof-av{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--ac),var(--ac2));display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;margin:0 auto 10px;box-shadow:0 0 18px rgba(0,152,234,.3)}
+.prof-nm{font-size:17px;font-weight:800;margin-bottom:2px}
+.prof-id{font-size:10px;color:var(--t2);margin-bottom:12px}
+.prof-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px}
+.prof-stat{background:rgba(0,152,234,.06);border:1px solid var(--b1);border-radius:10px;padding:9px 5px;text-align:center}
+.prof-stat-n{font-size:14px;font-weight:800}
+.prof-stat-l{font-size:9px;color:var(--t2);margin-top:2px;text-transform:uppercase;letter-spacing:.5px}
+.menubox{margin:12px 14px 0;background:var(--s1);border:1px solid var(--b1);border-radius:16px;overflow:hidden}
+.menu-title{padding:10px 14px 7px;font-size:10px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--b1)}
+.menu-row{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--b1);cursor:pointer}
+.menu-row:active{background:var(--s2)}
+.menu-row:last-child{border:none}
+.menu-ic{width:32px;height:32px;border-radius:9px;background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.menu-tx{flex:1}
+.menu-n{font-size:12px;font-weight:600;margin-bottom:1px}
+.menu-d{font-size:10px;color:var(--t2)}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.87);z-index:100;display:none;align-items:flex-end;backdrop-filter:blur(12px)}
+.ov.on{display:flex}
+.sheet{background:var(--s1);border-radius:24px 24px 0 0;border-top:1px solid var(--b2);width:100%;max-height:93vh;overflow-y:auto;transform:translateY(100%);transition:transform .32s cubic-bezier(.34,1.1,.64,1)}
+.sheet.open{transform:translateY(0)}
+.sheet::-webkit-scrollbar{display:none}
+.drag{width:36px;height:4px;background:rgba(255,255,255,.15);border-radius:2px;margin:10px auto 0}
+.sheet-body{padding:14px 16px 36px}
+.sheet-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.close-btn{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);color:var(--t2);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.lbl{font-size:10px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.amt-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:14px}
+.amt-btn{padding:10px 4px;border-radius:10px;border:1px solid var(--b1);background:var(--s2);color:var(--t1);font-size:12px;font-weight:700;cursor:pointer;text-align:center;font-family:inherit}
+.amt-btn .sub{font-size:9px;color:var(--t2);font-weight:400;margin-top:2px}
+.amt-btn.on{border-color:var(--ac);background:rgba(0,152,234,.12);color:var(--ac)}
+.amt-btn.on .sub{color:var(--ac);opacity:.8}
+.sumbox{background:var(--s2);border:1px solid var(--b1);border-radius:12px;padding:12px;margin-bottom:14px}
+.sum-row{display:flex;justify-content:space-between;font-size:12px;padding:5px 0;border-bottom:1px solid var(--b1)}
+.sum-row:last-child{border:none;padding-bottom:0}
+.sum-l{color:var(--t2)}
+.sum-v{font-weight:600}
+.sum-v.ac{color:var(--ac);font-size:14px;font-weight:800}
+.sum-v.gr{color:var(--gr)}
+.sum-v.ye{color:var(--ac3)}
+.buy-btn{width:100%;padding:16px;background:linear-gradient(135deg,var(--ac),var(--ac2));border:none;border-radius:14px;color:#fff;font-family:inherit;font-size:15px;font-weight:900;cursor:pointer;box-shadow:0 6px 20px rgba(0,152,234,.4);letter-spacing:.3px}
+.pay-methods{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.pay-m{padding:14px 7px;border-radius:13px;border:2px solid var(--b1);background:var(--s2);cursor:pointer;text-align:center;font-family:inherit}
+.pay-m.on{border-color:var(--ac);background:rgba(0,152,234,.1)}
+.pay-ic{font-size:24px;margin-bottom:5px}
+.pay-nm{font-size:12px;font-weight:700}
+.pay-sb{font-size:10px;color:var(--t2);margin-top:2px}
+.pay-m.on .pay-nm{color:var(--ac)}
+.addr-box{background:var(--s2);border:1px solid var(--b2);border-radius:11px;padding:12px;font-family:monospace;font-size:11px;color:var(--ac3);word-break:break-all;margin-bottom:10px;line-height:1.6}
+.copy-btn{width:100%;padding:11px;border-radius:10px;border:1px solid var(--b2);background:var(--b1);color:var(--ac);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:10px}
+.ton-btn{width:100%;padding:13px;border-radius:12px;background:linear-gradient(135deg,var(--ac),var(--ac2));border:none;color:#fff;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit;margin-bottom:10px;box-shadow:0 4px 14px rgba(0,152,234,.35)}
+.warn-box{background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.2);border-radius:10px;padding:10px 12px;font-size:10px;color:var(--ye);line-height:1.5;margin-bottom:14px}
+.conf-btn{width:100%;padding:18px;border-radius:14px;background:linear-gradient(135deg,#00C851,#007E33);border:none;color:#fff;font-family:inherit;font-weight:900;cursor:pointer;font-size:16px;letter-spacing:.5px;box-shadow:0 6px 22px rgba(0,200,81,.35)}
+.conf-btn-sub{font-size:11px;font-weight:400;opacity:.85;margin-top:3px}
+.adm-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.adm-stat{background:var(--s1);border:1px solid var(--b1);border-radius:13px;padding:13px;text-align:center}
+.adm-stat-n{font-size:22px;font-weight:900;margin-bottom:3px}
+.adm-stat-l{font-size:10px;color:var(--t2)}
+.filt-row{display:flex;gap:7px;margin-bottom:12px}
+.filt-btn{flex:1;padding:8px 4px;border-radius:9px;font-size:11px;font-weight:600;border:1px solid var(--b1);background:var(--s2);color:var(--t2);cursor:pointer;font-family:inherit;text-align:center}
+.filt-btn.on{background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff;border-color:transparent}
+.adm-card{background:var(--s1);border:1px solid var(--b1);border-radius:13px;padding:13px;margin-bottom:10px}
+.adm-card.pend{border-color:rgba(245,158,11,.5)}
+.adm-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.adm-oid{font-size:11px;font-weight:800;color:var(--ac)}
+.adm-info{background:var(--s2);border-radius:10px;padding:12px;margin-bottom:10px}
+.adm-prod{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.adm-pnm{font-size:13px;font-weight:700}
+.adm-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px}
+.adm-field{background:rgba(0,0,0,.3);border-radius:8px;padding:8px}
+.adm-fl{font-size:9px;color:var(--t2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px}
+.adm-fv{font-size:12px;font-weight:700}
+.adm-cust{font-size:11px;line-height:2;color:var(--t2)}
+.adm-cust b{color:var(--t1)}
+.adm-acts{display:flex;gap:7px}
+.adm-btn{flex:1;padding:10px;border-radius:9px;font-size:11px;font-weight:700;border:none;cursor:pointer;font-family:inherit}
+.adm-appr{background:linear-gradient(135deg,var(--gr),#059669);color:#fff}
+.adm-rej{background:rgba(239,68,68,.12);color:var(--re);border:1px solid rgba(239,68,68,.25)}
+.adm-dm{background:rgba(0,152,234,.12);color:var(--ac);border:1px solid var(--b2)}
+#toast{position:fixed;bottom:92px;left:50%;transform:translateX(-50%) translateY(8px);background:var(--s2);border:1px solid var(--b2);color:var(--t1);padding:10px 20px;border-radius:20px;font-size:12px;font-weight:600;opacity:0;transition:all .25s;z-index:9999;white-space:nowrap;pointer-events:none;box-shadow:0 4px 20px rgba(0,0,0,.5)}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="logo-row" id="logo-tap" onclick="secretTap()">
+      <div class="logo-box">💎</div>
+      <span class="logo-name">TON GIFT HUB</span>
+    </div>
+    <div class="hdr-right">
+      <select class="lang-sel" onchange="setLang(this.value)" id="lang-sel">
+        <option value="en">🇬🇧 EN</option>
+        <option value="ar">🇸🇦 AR</option>
+        <option value="ru">🇷🇺 RU</option>
+        <option value="es">🇪🇸 ES</option>
+        <option value="tr">🇹🇷 TR</option>
+        <option value="zh">🇨🇳 ZH</option>
+        <option value="fa">🇮🇷 FA</option>
+        <option value="uk">🇺🇦 UK</option>
+      </select>
+      <div id="pts-btn" onclick="navTo('rewards')">💎 0 pts</div>
+    </div>
+  </header>
+
+  <div id="scroll">
+    <div class="page on" id="page-home" style="display:block">
+      <div class="hero">
+        <div class="hero-pill">💎 Powered by TON</div>
+        <h1>Buy Gift Cards with Crypto 🔥</h1>
+        <p>Premium gift cards delivered in minutes. Pay with USDT or TON.</p>
+        <div class="hero-tags">
+          <div class="htag">🔒 Secure</div>
+          <div class="htag">💎 TON Pay</div>
+          <div class="htag">🌍 Global</div>
+          <div class="htag">⚡ Instant</div>
+          <div class="htag">✅ Verified</div>
+        </div>
+      </div>
+      <div class="search-wrap">
+        <span style="opacity:.3">🔍</span>
+        <input id="search-inp" placeholder="Search gift cards..." oninput="doSearch(this.value)">
+      </div>
+      <div class="cats">
+        <button class="cat on" onclick="filterCat('all',this)">🏪 All</button>
+        <button class="cat" onclick="filterCat('gaming',this)">🎮 Gaming</button>
+        <button class="cat" onclick="filterCat('streaming',this)">🎬 Streaming</button>
+        <button class="cat" onclick="filterCat('shopping',this)">🛒 Shopping</button>
+        <button class="cat" onclick="filterCat('music',this)">🎵 Music</button>
+        <button class="cat" onclick="filterCat('social',this)">📱 Social</button>
+      </div>
+      <div class="sec-hd">
+        <div class="sec-t">🔥 Gift Cards</div>
+        <div class="sec-s" id="card-count">20 cards</div>
+      </div>
+      <div id="cards-grid"></div>
+      <div class="trust">
+        <div class="trust-title">Why customers trust TON GIFT HUB</div>
+        <div class="trow"><div class="tic">🔐</div><div class="ttx"><div class="ttn">Blockchain Verified</div><div class="tds">Every payment verified on TON chain.</div></div><div class="tck">✓</div></div>
+        <div class="trow"><div class="tic">⚡</div><div class="ttx"><div class="ttn">Instant Delivery</div><div class="tds">Card codes sent within minutes.</div></div><div class="tck">✓</div></div>
+        <div class="trow"><div class="tic">🛡️</div><div class="ttx"><div class="ttn">100% Authentic</div><div class="tds">All cards from official sources.</div></div><div class="tck">✓</div></div>
+        <div class="trow"><div class="tic">💬</div><div class="ttx"><div class="ttn">24/7 Support</div><div class="tds">Contact us anytime via Telegram.</div></div><div class="tck">✓</div></div>
+        <div class="trow"><div class="tic">🔄</div><div class="ttx"><div class="ttn">Money-Back Guarantee</div><div class="tds">Invalid card? Replaced immediately.</div></div><div class="tck">✓</div></div>
+      </div>
+    </div>
+
+```
+<div class="page" id="page-orders" style="display:none">
+  <div style="padding:12px">
+    <div class="sec-hd" style="padding:0;margin-bottom:12px">
+      <div class="sec-t">My Orders</div>
+      <div class="sec-s" id="order-count">0 orders</div>
+    </div>
+    <div class="empty" id="orders-empty">
+      <div class="empty-i">📭</div>
+      <div class="empty-t">No Orders Yet</div>
+      <div class="empty-d">Your gift cards appear here after payment confirmation.</div>
+    </div>
+    <div id="orders-list"></div>
+  </div>
+</div>
+
+<div class="page" id="page-rewards" style="display:none">
+  <div class="rw-hero">
+    <div class="rw-label">💎 TON Points</div>
+    <div class="rw-pts" id="rw-pts">0</div>
+    <div class="rw-sub">Earn 2 pts per $1 spent (after approval)</div>
+    <div class="rw-bar-bg"><div class="rw-bar" id="rw-bar" style="width:0%"></div></div>
+    <div class="rw-next" id="rw-next">0 / 100,000 pts to free $10 card</div>
+  </div>
+  <div style="padding:0 14px;margin-bottom:14px">
+    <div class="sec-hd" style="padding:0;margin-bottom:10px"><div class="sec-t">🎁 Redeem Points</div></div>
+    <div class="rd-item"><div style="font-size:28px">🛒</div><div style="flex:1;margin-left:12px"><div style="font-size:13px;font-weight:700;margin-bottom:2px">$10 Gift Card</div><div style="font-size:11px;color:var(--ac3);font-weight:600">100,000 pts</div></div><button class="rd-btn rd-cant" id="btn-r10" onclick="redeemCard(10,100000)">Redeem</button></div>
+    <div class="rd-item"><div style="font-size:28px">🎮</div><div style="flex:1;margin-left:12px"><div style="font-size:13px;font-weight:700;margin-bottom:2px">$20 Gift Card</div><div style="font-size:11px;color:var(--ac3);font-weight:600">200,000 pts</div></div><button class="rd-btn rd-cant" id="btn-r20" onclick="redeemCard(20,200000)">Redeem</button></div>
+    <div class="rd-item"><div style="font-size:28px">🎬</div><div style="flex:1;margin-left:12px"><div style="font-size:13px;font-weight:700;margin-bottom:2px">$50 Gift Card</div><div style="font-size:11px;color:var(--ac3);font-weight:600">500,000 pts</div></div><button class="rd-btn rd-cant" id="btn-r50" onclick="redeemCard(50,500000)">Redeem</button></div>
+  </div>
+  <div style="padding:0 14px;margin-bottom:14px">
+    <div class="sec-hd" style="padding:0;margin-bottom:10px"><div class="sec-t">🔗 Referral Program</div></div>
+    <div class="ref-box">
+      <div style="font-size:11px;color:var(--t2);margin-bottom:10px">Invite friends and earn <b style="color:var(--ac3)">5,000 pts</b> per friend who buys!</div>
+      <div class="ref-row">
+        <div class="ref-code" id="ref-code">TON-XXXX</div>
+        <button class="ref-copy" onclick="copyRef()">Copy Link</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-profile" style="display:none">
+  <div class="prof-hero">
+    <div class="prof-av" id="prof-av">👤</div>
+    <div class="prof-nm" id="prof-name">Loading...</div>
+    <div class="prof-id" id="prof-id">Telegram User</div>
+    <div class="prof-stats">
+      <div class="prof-stat"><div class="prof-stat-n" id="prof-orders">0</div><div class="prof-stat-l">Orders</div></div>
+      <div class="prof-stat"><div class="prof-stat-n" id="prof-pts" style="color:var(--ac3)">0</div><div class="prof-stat-l">Points</div></div>
+      <div class="prof-stat"><div class="prof-stat-n" id="prof-refs" style="color:var(--ac)">0</div><div class="prof-stat-l">Refs</div></div>
+    </div>
+  </div>
+  <div class="menubox">
+    <div class="menu-title">Account</div>
+    <div class="menu-row" onclick="navTo('orders')"><div class="menu-ic">📦</div><div class="menu-tx"><div class="menu-n">My Orders</div><div class="menu-d">View all your purchases</div></div><div style="color:var(--t3)">›</div></div>
+    <div class="menu-row" onclick="navTo('rewards')"><div class="menu-ic">💎</div><div class="menu-tx"><div class="menu-n">Rewards & Points</div><div class="menu-d">Redeem for free gift cards</div></div><div style="color:var(--t3)">›</div></div>
+    <div class="menu-row" onclick="navTo('support')"><div class="menu-ic">💬</div><div class="menu-tx"><div class="menu-n">Support</div><div class="menu-d">Get help from our team</div></div><div style="color:var(--t3)">›</div></div>
+  </div>
+</div>
+
+<div class="page" id="page-support" style="display:none">
+  <div style="padding:12px">
+    <div style="display:flex;gap:10px;margin-bottom:14px">
+      <button onclick="openURL('https://t.me/aym1one')" style="flex:1;padding:14px;background:linear-gradient(135deg,var(--ac),var(--ac2));border:none;border-radius:13px;color:#fff;font-family:inherit;font-size:13px;font-weight:800;cursor:pointer">✈️ Telegram</button>
+      <button onclick="openURL('mailto:Aymangoran100@gmail.com')" style="flex:1;padding:14px;background:linear-gradient(135deg,#EA4335,#B31412);border:none;border-radius:13px;color:#fff;font-family:inherit;font-size:13px;font-weight:800;cursor:pointer">📧 Email</button>
+    </div>
+    <div class="menubox" style="margin:0">
+      <div class="menu-row" onclick="openURL('https://t.me/aym1one')"><div class="menu-ic">✈️</div><div class="menu-tx"><div class="menu-n">Telegram @aym1one</div><div class="menu-d">Reply in under 3 minutes</div></div><div style="color:var(--t3)">›</div></div>
+      <div class="menu-row"><div class="menu-ic">❓</div><div class="menu-tx"><div class="menu-n">How It Works</div><div class="menu-d">Browse → Buy → Pay → Receive code</div></div></div>
+      <div class="menu-row"><div class="menu-ic">💎</div><div class="menu-tx"><div class="menu-n">Payments Accepted</div><div class="menu-d">TON Blockchain, USDT TRC20</div></div></div>
+      <div class="menu-row"><div class="menu-ic">⚡</div><div class="menu-tx"><div class="menu-n">Delivery Time</div><div class="menu-d">1-15 minutes after confirmation</div></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-admin" style="display:none">
+  <div style="padding:12px">
+    <div style="background:linear-gradient(135deg,#060E20,#081428);border:1px solid var(--b2);border-radius:14px;padding:14px;margin-bottom:14px;text-align:center">
+      <div style="font-size:11px;color:var(--ac3);font-weight:700;margin-bottom:4px">👋 Welcome, Admin</div>
+      <div style="font-size:12px;color:var(--t2)">TON GIFT HUB Control Panel</div>
+      <button onclick="previewStore()" style="margin-top:10px;padding:8px 20px;background:var(--b1);border:1px solid var(--b2);color:var(--ac);font-size:11px;font-weight:700;border-radius:8px;cursor:pointer;font-family:inherit">🏪 Preview Store</button>
+    </div>
+    <div class="adm-stats">
+      <div class="adm-stat"><div class="adm-stat-n" id="stat-total" style="color:var(--ac)">0</div><div class="adm-stat-l">Total Orders</div></div>
+      <div class="adm-stat" style="border-color:rgba(245,158,11,.3)"><div class="adm-stat-n" id="stat-pend" style="color:var(--ye)">0</div><div class="adm-stat-l">Pending</div></div>
+      <div class="adm-stat" style="border-color:rgba(16,185,129,.3)"><div class="adm-stat-n" id="stat-done" style="color:var(--gr)">0</div><div class="adm-stat-l">Approved</div></div>
+      <div class="adm-stat" style="border-color:rgba(239,68,68,.3)"><div class="adm-stat-n" id="stat-canc" style="color:var(--re)">0</div><div class="adm-stat-l">Cancelled</div></div>
+    </div>
+    <div class="filt-row">
+      <button class="filt-btn on" onclick="admFilter('all',this)">All</button>
+      <button class="filt-btn" onclick="admFilter('pending',this)">⏳ Pending</button>
+      <button class="filt-btn" onclick="admFilter('done',this)">✅ Done</button>
+      <button class="filt-btn" onclick="admFilter('cancelled',this)">❌ Cancelled</button>
+    </div>
+    <div id="adm-orders"></div>
+  </div>
+</div>
+```
+
+  </div>
+
+  <nav class="bottom" id="cust-nav">
+    <button class="nb on" id="nb-home" onclick="navTo('home',this)"><div class="ic">🏪</div><div class="lb">Store</div></button>
+    <button class="nb" id="nb-orders" onclick="navTo('orders',this)"><div class="ic">📦</div><div class="lb">Orders</div></button>
+    <button class="nb" id="nb-rewards" onclick="navTo('rewards',this)"><div class="ic">💎</div><div class="lb">Rewards</div></button>
+    <button class="nb" id="nb-profile" onclick="navTo('profile',this)"><div class="ic">👤</div><div class="lb">Profile</div></button>
+    <button class="nb" id="nb-support" onclick="navTo('support',this)"><div class="ic">💬</div><div class="lb">Support</div></button>
+  </nav>
+  <nav class="bottom" id="adm-nav" style="display:none">
+    <button class="nb on" id="adm-nb-all" onclick="admNavFilter('all',this)"><div class="ic">📋</div><div class="lb">All</div></button>
+    <button class="nb" id="adm-nb-pend" onclick="admNavFilter('pending',this)"><div class="ic">⏳</div><div class="lb">Pending</div></button>
+    <button class="nb" id="adm-nb-done" onclick="admNavFilter('done',this)"><div class="ic">✅</div><div class="lb">Done</div></button>
+    <button class="nb" id="adm-nb-canc" onclick="admNavFilter('cancelled',this)"><div class="ic">❌</div><div class="lb">Cancelled</div></button>
+    <button class="nb" id="adm-nb-store" onclick="previewStore()"><div class="ic">🏪</div><div class="lb">Store</div></button>
+  </nav>
+</div>
+
+<div class="ov" id="ov-prod" onclick="if(event.target===this)closeProd()">
+  <div class="sheet" id="sheet-prod"><div class="drag"></div><div class="sheet-body" id="prod-body"></div></div>
+</div>
+<div class="ov" id="ov-pay" onclick="if(event.target===this)closePay()">
+  <div class="sheet" id="sheet-pay"><div class="drag"></div><div class="sheet-body" id="pay-body"></div></div>
+</div>
+<div id="toast"></div>
+
+<script>
+var USDT_TRC='TERUMbyPWyMHMijgSBrYZ9UWk4UquBs3ub';
+var TON_ADDR='UQDNEWfXJe0hCYsfZ6q4oMKB5ns3Y8dOktNkm00CGL7WyhJy';
+var OWNER='816394591';
+var ADMINS=['816394591'];
+var _t=['ODI5NjAzMDE4NDp','BQUVPOHdrMlN0VF','lvb0hNZDNVNUVtV','GM0ZmhlSk5sbTlfSQ=='];
+var BT=atob(_t[0]+_t[1]+_t[2]+_t[3]);
+
+var tg=null;var tgU={first_name:'Guest',id:'000000'};
+try{
+  tg=window.Telegram&&window.Telegram.WebApp?window.Telegram.WebApp:null;
+  if(tg){tg.ready();tg.expand();}
+  if(tg&&tg.initDataUnsafe&&tg.initDataUnsafe.user)tgU=tg.initDataUnsafe.user;
+}catch(e){}
+
+var isAdm=ADMINS.indexOf(String(tgU.id))>=0;
+var SK='tgh_'+(tgU.id||'g');
+var ST={pts:0,orders:[],refs:0,rp:0};
+try{var _sv=JSON.parse(localStorage.getItem(SK));if(_sv&&_sv.orders)ST=_sv;}catch(e){}
+var curP=null,curA=0,curNet='trc';
+var _tapCount=0,_tapTimer=null;
+var _storeMode=false;
+
+function save(){try{localStorage.setItem(SK,JSON.stringify(ST));}catch(e){}}
+function gAO(){try{return JSON.parse(localStorage.getItem('tgh_ao')||'[]');}catch(e){return[];}}
+function sAO(o){try{localStorage.setItem('tgh_ao',JSON.stringify(o));}catch(e){}}
+
+function secretTap(){
+  _tapCount++;
+  if(_tapTimer)clearTimeout(_tapTimer);
+  _tapTimer=setTimeout(function(){_tapCount=0;},2000);
+  if(_tapCount>=5){
+    _tapCount=0;
+    var pwd=prompt('Admin Password:');
+    if(pwd==='D22g'){isAdm=true;openAdmin();toast('✅ Admin access granted!');}
+    else toast('❌ Wrong password');
+  }
+}
+
+function openAdmin(){
+  _storeMode=false;
+  document.getElementById('cust-nav').style.display='none';
+  document.getElementById('adm-nav').style.display='flex';
+  showPage('admin');
+  renderAdm();
+}
+
+function previewStore(){
+  _storeMode=true;
+  var nbs=document.querySelectorAll('#adm-nav .nb');
+  for(var i=0;i<nbs.length;i++)nbs[i].classList.remove('on');
+  document.getElementById('adm-nb-store').classList.add('on');
+  showPage('home');
+  renderCards(products);
+}
+
+function admNavFilter(f,btn){
+  _storeMode=false;
+  var nbs=document.querySelectorAll('#adm-nav .nb');
+  for(var i=0;i<nbs.length;i++)nbs[i].classList.remove('on');
+  btn.classList.add('on');
+  showPage('admin');
+  var fbs=document.querySelectorAll('.filt-btn');
+  for(var i=0;i<fbs.length;i++)fbs[i].classList.remove('on');
+  var map={'all':0,'pending':1,'done':2,'cancelled':3};
+  if(fbs[map[f]])fbs[map[f]].classList.add('on');
+  renderAdm(f==='all'?null:f);
+}
+
+var products=[
+  {id:1,  name:'Amazon',       emoji:'🛒', bg:'linear-gradient(135deg,#2A1200,#1C0A00)', cat:'shopping',  desc:'Shop millions of items on Amazon globally.',                     amts:['$10','$25','$50','$100','$200'], prices:['10.5 USDT','26 USDT','52 USDT','103 USDT','205 USDT'], usd:[10,25,50,100,200],   badge:'hot'},
+  {id:2,  name:'Google Play',  emoji:'▶️', bg:'linear-gradient(135deg,#001A08,#00100A)', cat:'gaming',    desc:'Apps, games and subscriptions for Android.',                     amts:['$10','$25','$50','$100'],        prices:['10.5 USDT','26 USDT','52 USDT','103 USDT'],              usd:[10,25,50,100],       badge:'hot'},
+  {id:3,  name:'iTunes',       emoji:'🎵', bg:'linear-gradient(135deg,#200010,#180008)', cat:'music',     desc:'Music, movies and apps for Apple devices.',                      amts:['$10','$25','$50','$100'],        prices:['10.5 USDT','26 USDT','52 USDT','103 USDT'],              usd:[10,25,50,100],       badge:''},
+  {id:4,  name:'Steam',        emoji:'🎮', bg:'linear-gradient(135deg,#0E1820,#080F16)', cat:'gaming',    desc:'Thousands of PC games on Steam.',                                amts:['$10','$20','$50','$100'],        prices:['10.5 USDT','21 USDT','52 USDT','103 USDT'],              usd:[10,20,50,100],       badge:''},
+  {id:5,  name:'Netflix',      emoji:'🎬', bg:'linear-gradient(135deg,#200006,#1A0002)', cat:'streaming', desc:'Stream shows and movies worldwide.',                             amts:['$15','$30','$50','$100'],        prices:['15.5 USDT','31 USDT','52 USDT','103 USDT'],              usd:[15,30,50,100],       badge:''},
+  {id:6,  name:'PlayStation',  emoji:'🕹️', bg:'linear-gradient(135deg,#001030,#00081A)', cat:'gaming',    desc:'Games, PS Plus and DLC on PSN.',                                amts:['$10','$20','$50','$100'],        prices:['10.5 USDT','21 USDT','52 USDT','103 USDT'],              usd:[10,20,50,100],       badge:''},
+  {id:7,  name:'Xbox',         emoji:'🟢', bg:'linear-gradient(135deg,#001C00,#001400)', cat:'gaming',    desc:'Games and Xbox Game Pass.',                                      amts:['$10','$25','$50','$100'],        prices:['10.5 USDT','26 USDT','52 USDT','103 USDT'],              usd:[10,25,50,100],       badge:''},
+  {id:8,  name:'Spotify',      emoji:'🎧', bg:'linear-gradient(135deg,#0A2010,#081A0A)', cat:'music',     desc:'Music streaming for all devices.',                               amts:['$10','$30','$60'],               prices:['10.5 USDT','31 USDT','62 USDT'],                         usd:[10,30,60],           badge:'new'},
+  {id:9,  name:'PUBG Mobile',  emoji:'🎯', bg:'linear-gradient(135deg,#1A1000,#120900)', cat:'gaming',    desc:'UC voucher for PUBG Mobile.',                                    amts:['60 UC','325 UC','660 UC','1800 UC'], prices:['1.5 USDT','6 USDT','10 USDT','25 USDT'],              usd:[1.5,6,10,25],        badge:'hot'},
+  {id:10, name:'Free Fire',    emoji:'💎', bg:'linear-gradient(135deg,#200800,#1A0400)', cat:'gaming',    desc:'Diamonds for Free Fire. Instant delivery.',                      amts:['100 💎','310 💎','520 💎','1080 💎'], prices:['2 USDT','5 USDT','8 USDT','15 USDT'],                usd:[2,5,8,15],           badge:'hot'},
+  {id:11, name:'Roblox',       emoji:'🟥', bg:'linear-gradient(135deg,#200000,#180000)', cat:'gaming',    desc:'Robux for Roblox platform.',                                     amts:['400 Robux','800 Robux','1700 Robux'], prices:['5 USDT','10 USDT','20 USDT'],                         usd:[5,10,20],            badge:'new'},
+  {id:12, name:'Razer Gold',   emoji:'🐍', bg:'linear-gradient(135deg,#001800,#000F00)', cat:'gaming',    desc:'Razer Gold for mobile and PC gaming.',                           amts:['$5','$10','$20','$50'],          prices:['5.5 USDT','10.5 USDT','21 USDT','52 USDT'],              usd:[5,10,20,50],         badge:'new'},
+  {id:13, name:'Apple Store',  emoji:'🍎', bg:'linear-gradient(135deg,#1A1A1A,#0D0D0D)', cat:'shopping',  desc:'App Store for all Apple services.',                              amts:['$10','$25','$50','$100'],        prices:['10.5 USDT','26 USDT','52 USDT','103 USDT'],              usd:[10,25,50,100],       badge:''},
+  {id:14, name:'Binance',      emoji:'🟡', bg:'linear-gradient(135deg,#1A1200,#120E00)', cat:'shopping',  desc:'Top up your Binance account with crypto.',                       amts:['$20','$50','$100','$200'],       prices:['21 USDT','52 USDT','103 USDT','205 USDT'],               usd:[20,50,100,200],      badge:'hot'},
+  {id:15, name:'Noon',         emoji:'🛍️', bg:'linear-gradient(135deg,#1A1400,#100C00)', cat:'shopping',  desc:'Shop on Noon — Middle East largest store.',                      amts:['$10','$25','$50','$100'],        prices:['10.5 USDT','26 USDT','52 USDT','103 USDT'],              usd:[10,25,50,100],       badge:'new'},
+  {id:16, name:'TikTok',       emoji:'🎵', bg:'linear-gradient(135deg,#001A1A,#000F14)', cat:'social',    desc:'TikTok coins for live gifts and creator tips.',                  amts:['100 🪙','500 🪙','1000 🪙','2000 🪙'], prices:['1.5 USDT','6.5 USDT','12 USDT','22 USDT'],           usd:[1.5,6.5,12,22],      badge:'hot'},
+  {id:17, name:'YouTube',      emoji:'▶️', bg:'linear-gradient(135deg,#200000,#160000)', cat:'streaming', desc:'YouTube Premium membership gift cards.',                         amts:['1 Month','3 Months','6 Months'],  prices:['14 USDT','38 USDT','72 USDT'],                          usd:[14,38,72],           badge:'new'},
+  {id:18, name:'Minecraft',    emoji:'⛏️', bg:'linear-gradient(135deg,#0A1400,#060E00)', cat:'gaming',    desc:'Minecraft Java & Bedrock Edition codes.',                        amts:['Java Ed.','Bedrock Ed.'],         prices:['27 USDT','27 USDT'],                                    usd:[27,27],              badge:''},
+  {id:19, name:'Discord',      emoji:'💬', bg:'linear-gradient(135deg,#0A0820,#060518)', cat:'social',    desc:'Discord Nitro subscription gift cards.',                         amts:['1 Month','3 Months','12 Months'], prices:['12 USDT','30 USDT','100 USDT'],                         usd:[12,30,100],          badge:'new'},
+  {id:20, name:'Fortnite',     emoji:'🎯', bg:'linear-gradient(135deg,#001820,#000F18)', cat:'gaming',    desc:'V-Bucks for Fortnite skins and battle pass.',                    amts:['1000 V','2800 V','5000 V','13500 V'], prices:['8 USDT','20 USDT','32 USDT','80 USDT'],              usd:[8,20,32,80],         badge:'hot'}
+];
+
+function renderCards(list){
+  var g=document.getElementById('cards-grid');if(!g)return;
+  var cc=document.getElementById('card-count');if(cc)cc.textContent=list.length+' cards';
+  var h='';
+  for(var i=0;i<list.length;i++){
+    var p=list[i];
+    var bdg='';
+    if(p.badge==='hot')bdg='<div class="card-badge bh">🔥 Hot</div>';
+    else if(p.badge==='new')bdg='<div class="card-badge bn">✨ New</div>';
+    else if(p.badge==='pop')bdg='<div class="card-badge bp">⭐ Pop</div>';
+    h+='<div class="card" onclick="openProd('+p.id+')">';
+    h+='<div class="card-img" style="background:'+p.bg+'">'+bdg+p.emoji+'</div>';
+    h+='<div class="card-info"><div class="card-name">'+p.name+'</div>';
+    h+='<div class="card-price">From '+p.prices[0]+'</div>';
+    h+='<div class="card-tag">USDT · TON</div></div></div>';
+  }
+  g.innerHTML=h;
+}
+
+function filterCat(cat,btn){
+  var bs=document.querySelectorAll('.cat');
+  for(var i=0;i<bs.length;i++)bs[i].classList.remove('on');
+  btn.classList.add('on');
+  renderCards(cat==='all'?products:products.filter(function(p){return p.cat===cat;}));
+}
+
+function doSearch(q){
+  renderCards(q?products.filter(function(p){return p.name.toLowerCase().indexOf(q.toLowerCase())>=0;}):products);
+}
+
+function openProd(id){
+  curP=null;curA=0;
+  for(var i=0;i<products.length;i++)if(products[i].id===id){curP=products[i];break;}
+  if(!curP)return;
+  var p=curP,ah='';
+  for(var i=0;i<p.amts.length;i++){
+    ah+='<button class="amt-btn'+(i===0?' on':'')+'" onclick="selAmt('+i+',this)">';
+    ah+=p.amts[i]+'<div class="sub">'+p.prices[i]+'</div></button>';
+  }
+  var h='<div class="sheet-hd">';
+  h+='<div style="display:flex;align-items:center;gap:10px;flex:1">';
+  h+='<div style="width:46px;height:46px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:24px;background:'+p.bg+'">'+p.emoji+'</div>';
+  h+='<div><div style="font-size:17px;font-weight:800">'+p.name+'</div><div style="font-size:11px;color:var(--t2)">Gift Card</div></div></div>';
+  h+='<button class="close-btn" onclick="closeProd()">✕</button></div>';
+  h+='<div style="font-size:12px;color:var(--t2);line-height:1.5;margin-bottom:14px">'+p.desc+'</div>';
+  h+='<div class="lbl">Select Amount</div>';
+  h+='<div class="amt-grid">'+ah+'</div>';
+  h+='<div class="sumbox">';
+  h+='<div class="sum-row"><span class="sum-l">Item</span><span class="sum-v">'+p.name+' <span id="sv-amt">'+p.amts[0]+'</span></span></div>';
+  h+='<div class="sum-row"><span class="sum-l">You Pay</span><span class="sum-v ac" id="sv-price">'+p.prices[0]+'</span></div>';
+  h+='<div class="sum-row"><span class="sum-l">Points earned</span><span class="sum-v ye" id="sv-pts">+'+Math.floor(p.usd[0]*2)+' pts</span></div>';
+  h+='<div class="sum-row"><span class="sum-l">Delivery</span><span class="sum-v gr">⚡ Instant</span></div>';
+  h+='</div>';
+  h+='<button class="buy-btn" id="buy-btn" onclick="openPay()">🛒 Buy Now — '+p.prices[0]+'</button>';
+  document.getElementById('prod-body').innerHTML=h;
+  document.getElementById('ov-prod').classList.add('on');
+  setTimeout(function(){document.getElementById('sheet-prod').classList.add('open');},10);
+}
+
+function selAmt(i,el){
+  curA=i;
+  var bs=document.querySelectorAll('.amt-btn');
+  for(var j=0;j<bs.length;j++)bs[j].classList.remove('on');
+  el.classList.add('on');
+  var e=document.getElementById('sv-amt');if(e)e.textContent=curP.amts[i];
+  e=document.getElementById('sv-price');if(e)e.textContent=curP.prices[i];
+  e=document.getElementById('sv-pts');if(e)e.textContent='+'+Math.floor(curP.usd[i]*2)+' pts';
+  e=document.getElementById('buy-btn');if(e)e.textContent='🛒 Buy Now — '+curP.prices[i];
+}
+
+function closeProd(){
+  document.getElementById('sheet-prod').classList.remove('open');
+  setTimeout(function(){document.getElementById('ov-prod').classList.remove('on');},300);
+}
+
+function openPay(){
+  closeProd();
+  var p=curP,amt=p.amts[curA],price=p.prices[curA];
+  curNet='ton';
+  var h='<div class="sheet-hd">';
+  h+='<div><div style="font-size:17px;font-weight:800">Complete Payment</div>';
+  h+='<div style="font-size:11px;color:var(--t2);margin-top:2px">'+p.name+' '+amt+' · <b style="color:var(--ac)">'+price+'</b></div></div>';
+  h+='<button class="close-btn" onclick="closePay()">✕</button></div>';
+  h+='<div class="lbl">Choose Payment Method</div>';
+  h+='<div class="pay-methods">';
+  h+='<div class="pay-m on" id="pm-ton" onclick="swNet(\'ton\',this)"><div class="pay-ic">💎</div><div class="pay-nm">TON</div><div class="pay-sb">Telegram Wallet</div></div>';
+  h+='<div class="pay-m" id="pm-trc" onclick="swNet(\'trc\',this)"><div class="pay-ic">💵</div><div class="pay-nm">USDT TRC20</div><div class="pay-sb">Tron Network</div></div>';
+  h+='</div>';
+  h+='<div id="ton-sec">';
+  h+='<div style="background:rgba(0,152,234,.08);border:1px solid rgba(0,152,234,.2);border-radius:13px;padding:14px;margin-bottom:12px">';
+  h+='<div style="font-size:12px;font-weight:700;color:var(--ac3);margin-bottom:8px">💎 Pay with TON Wallet</div>';
+  h+='<div style="font-size:10px;color:var(--t2);margin-bottom:10px;line-height:1.9">Step 1: Open @wallet in Telegram<br>Step 2: Tap Send<br>Step 3: Paste address below<br>Step 4: Send <b style="color:var(--ac)">'+price+'</b> worth of TON</div>';
+  h+='<div class="addr-box">'+TON_ADDR+'</div>';
+  h+='<button class="copy-btn" onclick="cpTon()">📋 Copy TON Address</button>';
+  h+='<button class="ton-btn" onclick="openURL(\'https://t.me/wallet\')">💎 Open @wallet Now</button>';
+  h+='</div></div>';
+  h+='<div id="addr-sec" style="display:none">';
+  h+='<div style="background:rgba(0,152,234,.06);border:1px solid rgba(0,152,234,.15);border-radius:13px;padding:14px;margin-bottom:12px">';
+  h+='<div style="font-size:12px;font-weight:700;color:var(--ac3);margin-bottom:8px">💵 Pay with USDT TRC20</div>';
+  h+='<div style="font-size:10px;color:var(--t2);margin-bottom:10px;line-height:1.9">Send exactly <b style="color:var(--ac)">'+price+'</b> to the address below<br>Network: <b>Tron (TRC20)</b> only!</div>';
+  h+='<div class="addr-box" id="pay-addr">'+USDT_TRC+'</div>';
+  h+='<button class="copy-btn" onclick="cpAddr()">📋 Copy USDT Address</button>';
+  h+='</div></div>';
+  h+='<div class="warn-box">⚠️ Send exactly <b>'+price+'</b>. Wrong amount or wrong network = funds may be lost!</div>';
+  h+='<button class="conf-btn" onclick="confPay()">';
+  h+='<div>✅ I Have Sent the Payment</div>';
+  h+='<div class="conf-btn-sub">Tap after sending crypto</div>';
+  h+='</button>';
+  h+='<div style="font-size:10px;color:var(--t2);text-align:center;margin-top:12px;line-height:1.6;padding-bottom:4px">⏱ Admin will verify and deliver your card<br>within 1-15 minutes after payment.</div>';
+  document.getElementById('pay-body').innerHTML=h;
+  document.getElementById('ov-pay').classList.add('on');
+  setTimeout(function(){document.getElementById('sheet-pay').classList.add('open');},10);
+}
+
+function swNet(net,el){
+  curNet=net;
+  var ms=document.querySelectorAll('.pay-m');
+  for(var i=0;i<ms.length;i++)ms[i].classList.remove('on');
+  el.classList.add('on');
+  document.getElementById('ton-sec').style.display=net==='ton'?'block':'none';
+  document.getElementById('addr-sec').style.display=net==='trc'?'block':'none';
+}
+
+function cpAddr(){try{navigator.clipboard.writeText(USDT_TRC);}catch(e){}toast('✅ USDT address copied!');}
+function cpTon(){try{navigator.clipboard.writeText(TON_ADDR);}catch(e){}toast('✅ TON address copied!');}
+
+function closePay(){
+  document.getElementById('sheet-pay').classList.remove('open');
+  setTimeout(function(){document.getElementById('ov-pay').classList.remove('on');},300);
+}
+
+function confPay(){
+  closePay();
+  var p=curP,amt=p.amts[curA],price=p.prices[curA];
+  var pts=Math.floor(p.usd[curA]*2);
+  var oid='TGH-'+Date.now().toString().slice(-6);
+  var nm=(tgU.first_name||'')+(tgU.last_name?' '+tgU.last_name:'');
+  var hd=tgU.username?'@'+tgU.username:'No username';
+  var nl=curNet==='ton'?'TON':'USDT TRC20';
+  var ord={id:oid,name:p.name+' '+amt,emoji:p.emoji,price:price,pts:pts,status:'pending',date:new Date().toLocaleDateString(),net:nl,uid:String(tgU.id||'?'),nm:nm,hd:hd};
+  ST.orders.unshift(ord);save();
+  var ao=gAO();ao.unshift(ord);sAO(ao);updUI();
+  var msg='🔔 NEW ORDER!\n\n🆔 #'+oid+'\n📦 '+p.name+' '+amt+'\n💰 '+price+'\n🌐 '+nl+'\n\n👤 '+nm+'\n🔗 '+hd+'\n📱 ID: '+(tgU.id||'?')+'\n📅 '+new Date().toLocaleString()+'\n\n⚡ Check wallet and approve in admin panel!';
+  sendMsg(OWNER, msg);
+  toast('✅ Order #'+oid+' placed! Awaiting confirmation.');
+  navTo('orders');
+}
+
+function sendMsg(chatId, text){
+  try{
+    fetch('https://api.telegram.org/bot'+BT+'/sendMessage',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({chat_id:chatId,text:text,parse_mode:'HTML'})
+    });
+  }catch(e){}
+}
+
+function renderOrders(){
+  var l=document.getElementById('orders-list'),em=document.getElementById('orders-empty'),oc=document.getElementById('order-count');
+  if(oc)oc.textContent=ST.orders.length+' orders';
+  if(!ST.orders.length){if(em)em.style.display='block';if(l)l.innerHTML='';return;}
+  if(em)em.style.display='none';
+  var h='';
+  for(var i=0;i<ST.orders.length;i++){
+    var o=ST.orders[i];
+    var sc=o.status==='done'?'b-done':o.status==='cancelled'?'b-canc':'b-pend';
+    var st=o.status==='done'?'✅ Delivered':o.status==='cancelled'?'❌ Cancelled':'⏳ Pending';
+    h+='<div class="order-row"><div class="order-ic">'+(o.emoji||'🎁')+'</div>';
+    h+='<div class="order-inf"><div class="order-nm">'+o.name+'</div>';
+    h+='<div class="order-sb">'+o.price+' · '+(o.net||'')+(o.status==='done'?' · +'+o.pts+' pts':'')+'</div>';
+    h+='<div class="order-dt">'+o.date+' · #'+o.id+'</div></div>';
+    h+='<div class="badge '+sc+'">'+st+'</div></div>';
+  }
+  if(l)l.innerHTML=h;
+}
+
+function renderRewards(){
+  var e=document.getElementById('rw-pts');if(e)e.textContent=ST.pts;
+  var pct=Math.min((ST.pts/100000)*100,100);
+  e=document.getElementById('rw-bar');if(e)e.style.width=pct+'%';
+  e=document.getElementById('rw-next');if(e)e.textContent=ST.pts.toLocaleString()+' / 100,000 pts to free $10 card';
+  var code='TGH-'+String(tgU.id||'0000').slice(-4).toUpperCase();
+  e=document.getElementById('ref-code');if(e)e.textContent=code;
+  var reqs=[100000,200000,500000];
+  ['r10','r20','r50'].forEach(function(id,i){
+    var b=document.getElementById('btn-'+id);if(!b)return;
+    b.className=ST.pts>=reqs[i]?'rd-btn rd-can':'rd-btn rd-cant';
+  });
+}
+
+function redeemCard(v,req){
+  if(ST.pts<req){toast('❌ Not enough points!');return;}
+  ST.pts-=req;save();updUI();
+  sendMsg(OWNER,'🎁 REDEEM REQUEST\n\n👤 '+(tgU.first_name||'?')+' @'+(tgU.username||'?')+'\n🆔 '+(tgU.id||'?')+'\n💰 Wants $'+v+' gift card\n📊 Used '+req+' pts');
+  toast('🎁 Redeemed! Admin will send your $'+v+' card shortly.');
+  renderRewards();
+}
+
+function copyRef(){
+  var c=document.getElementById('ref-code');
+  try{navigator.clipboard.writeText('https://t.me/tonscards_bot?start='+(c?c.textContent:''));}catch(e){}
+  toast('✅ Referral link copied!');
+}
+
+function renderProfile(){
+  var nm=(tgU.first_name||'')+(tgU.last_name?' '+tgU.last_name:'');
+  var ini=nm.split(' ').map(function(n){return n[0]||'';}).join('').toUpperCase().slice(0,2)||'👤';
+  var e=document.getElementById('prof-av');if(e)e.textContent=ini;
+  e=document.getElementById('prof-name');if(e)e.textContent=nm||'Guest';
+  e=document.getElementById('prof-id');if(e)e.textContent='@'+(tgU.username||'user')+' · ID: '+(tgU.id||'---');
+  e=document.getElementById('prof-orders');if(e)e.textContent=ST.orders.filter(function(o){return o.status==='done';}).length;
+  e=document.getElementById('prof-pts');if(e)e.textContent=ST.pts;
+  e=document.getElementById('prof-refs');if(e)e.textContent=ST.refs||0;
+}
+
+function renderAdm(filter){
+  var ao=gAO();
+  var e=document.getElementById('stat-total');if(e)e.textContent=ao.length;
+  e=document.getElementById('stat-pend');if(e)e.textContent=ao.filter(function(o){return o.status==='pending';}).length;
+  e=document.getElementById('stat-done');if(e)e.textContent=ao.filter(function(o){return o.status==='done';}).length;
+  e=document.getElementById('stat-canc');if(e)e.textContent=ao.filter(function(o){return o.status==='cancelled';}).length;
+  var list=filter?ao.filter(function(o){return o.status===filter;}):ao;
+  var sorted=list.filter(function(o){return o.status==='pending';}).concat(list.filter(function(o){return o.status!=='pending';}));
+  var el=document.getElementById('adm-orders');if(!el)return;
+  if(!sorted.length){el.innerHTML='<div class="empty"><div class="empty-i">📭</div><div class="empty-t">No orders yet</div><div class="empty-d">Orders will appear here when customers buy.</div></div>';return;}
+  var h='';
+  for(var i=0;i<sorted.length;i++){
+    var o=sorted[i];
+    var sc=o.status==='done'?'b-done':o.status==='cancelled'?'b-canc':'b-pend';
+    var st=o.status==='done'?'✅ Approved':o.status==='cancelled'?'❌ Cancelled':'⏳ Pending';
+    h+='<div class="adm-card'+(o.status==='pending'?' pend':'')+'"><div class="adm-head"><div class="adm-oid">#'+o.id+'</div><div class="badge '+sc+'">'+st+'</div></div>';
+    h+='<div class="adm-info"><div class="adm-prod"><span style="font-size:20px">'+(o.emoji||'🎁')+'</span><div class="adm-pnm" style="margin-left:8px">'+o.name+'</div></div>';
+    h+='<div class="adm-grid"><div class="adm-field"><div class="adm-fl">Amount</div><div class="adm-fv" style="color:var(--ac)">'+o.price+'</div></div>';
+    h+='<div class="adm-field"><div class="adm-fl">Network</div><div class="adm-fv">'+(o.net||'?')+'</div></div></div>';
+    h+='<div class="adm-cust">👤 <b>'+(o.nm||'Guest')+'</b><br>🔗 <b style="color:var(--ac)">'+(o.hd||'No username')+'</b><br>🆔 <b>'+(o.uid||'?')+'</b><br>📅 '+o.date+'</div></div>';
+    h+='<div class="adm-acts">';
+    if(o.status==='pending'){
+      h+='<button class="adm-btn adm-appr" onclick="admAppr(\''+o.id+'\',\''+o.uid+'\','+o.pts+')">✅ Approve</button>';
+      h+='<button class="adm-btn adm-rej" onclick="admRej(\''+o.id+'\')">❌ Reject</button>';
+    }
+    h+='<button class="adm-btn adm-dm" onclick="admDM(\''+o.hd+'\')">💬 Chat</button>';
+    h+='</div></div>';
+  }
+  el.innerHTML=h;
+}
+
+function admFilter(f,btn){
+  var bs=document.querySelectorAll('.filt-btn');for(var i=0;i<bs.length;i++)bs[i].classList.remove('on');
+  btn.classList.add('on');
+  renderAdm(f==='all'?null:f);
+}
+
+function admAppr(oid,uid,pts){
+  var ao=gAO();
+  for(var i=0;i<ao.length;i++)if(ao[i].id===oid){ao[i].status='done';break;}
+  sAO(ao);
+  try{
+    var uk='tgh_'+uid;
+    var us=JSON.parse(localStorage.getItem(uk)||'null');
+    if(us&&us.orders){
+      for(var i=0;i<us.orders.length;i++)if(us.orders[i].id===oid){us.orders[i].status='done';break;}
+      us.pts=(us.pts||0)+pts;
+      localStorage.setItem(uk,JSON.stringify(us));
+      if(String(uid)===String(tgU.id)){ST=us;updUI();}
+    }
+  }catch(e){}
+  sendMsg(uid,'✅ Your order #'+oid+' has been APPROVED!\n\nYour gift card code will be sent to you shortly.\n\n⭐ +'+pts+' loyalty points added to your account!\n\nThank you for shopping at TON GIFT HUB 💎');
+  toast('✅ Approved! Customer notified.');
+  renderAdm();
+}
+
+function admRej(oid){
+  var ao=gAO(),o=null;
+  for(var i=0;i<ao.length;i++)if(ao[i].id===oid){ao[i].status='cancelled';o=ao[i];break;}
+  sAO(ao);
+  if(o){
+    try{
+      var uk='tgh_'+o.uid;
+      var us=JSON.parse(localStorage.getItem(uk)||'null');
+      if(us&&us.orders){
+        for(var i=0;i<us.orders.length;i++)if(us.orders[i].id===oid){us.orders[i].status='cancelled';break;}
+        localStorage.setItem(uk,JSON.stringify(us));
+        if(String(o.uid)===String(tgU.id)){ST=us;updUI();}
+      }
+    }catch(e){}
+    sendMsg(o.uid,'❌ Order #'+oid+' was cancelled.\n\nPayment could not be confirmed.\nPlease contact support: @aym1one');
+  }
+  toast('❌ Rejected. Customer notified.');
+  renderAdm();
+}
+
+function admDM(hd){
+  var u=(hd||'').replace('@','');
+  if(!u||u==='No username'){toast('No username available');return;}
+  openURL('https://t.me/'+u);
+}
+
+function showPage(pg){
+  var pages=document.querySelectorAll('.page');
+  for(var i=0;i<pages.length;i++){pages[i].classList.remove('on');pages[i].style.display='none';}
+  var p=document.getElementById('page-'+pg);
+  if(p){p.classList.add('on');p.style.display='block';}
+}
+
+function navTo(pg,el){
+  showPage(pg);
+  if(!isAdm||_storeMode){
+    var nbs=document.querySelectorAll('#cust-nav .nb');
+    for(var i=0;i<nbs.length;i++)nbs[i].classList.remove('on');
+    var nb=el&&el.classList&&el.classList.contains('nb')?el:document.getElementById('nb-'+pg);
+    if(nb)nb.classList.add('on');
+  }
+  var sc=document.getElementById('scroll');if(sc)sc.scrollTop=0;
+  if(pg==='orders')renderOrders();
+  if(pg==='rewards')renderRewards();
+  if(pg==='profile')renderProfile();
+  if(pg==='admin')renderAdm();
+  if(pg==='home')renderCards(products);
+}
+
+function updUI(){
+  var e=document.getElementById('pts-btn');if(e)e.textContent='💎 '+ST.pts+' pts';
+  var ep=document.getElementById('prof-pts');if(ep)ep.textContent=ST.pts;
+}
+
+function toast(msg){
+  var t=document.getElementById('toast');if(!t)return;
+  t.textContent=msg;t.style.opacity='1';t.style.transform='translateX(-50%) translateY(0)';
+  setTimeout(function(){t.style.opacity='0';t.style.transform='translateX(-50%) translateY(8px)';},3000);
+}
+
+function openURL(u){
+  try{if(tg&&tg.openTelegramLink&&u.indexOf('t.me')>=0){tg.openTelegramLink(u);return;}}catch(e){}
+  try{if(tg&&tg.openLink){tg.openLink(u);return;}}catch(e){}
+  window.open(u,'_blank');
+}
+
+function setLang(l){
+  var isRTL=l==='ar'||l==='fa';
+  document.body.dir=isRTL?'rtl':'ltr';
+  try{localStorage.setItem('tgh_lang',l);}catch(e){}
+}
+
+// INIT
+(function(){
+  try{
+    var sl=document.getElementById('lang-sel');
+    var lang=localStorage.getItem('tgh_lang')||'en';
+    if(sl)sl.value=lang;
+    setLang(lang);
+  }catch(e){}
+  if(isAdm){
+    openAdmin();
+  }else{
+    showPage('home');
+    renderCards(products);
+    updUI();
+  }
+})();
+</script>
+
+</body>
+</html>
